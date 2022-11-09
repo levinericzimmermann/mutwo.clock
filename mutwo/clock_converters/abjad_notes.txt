@@ -1,0 +1,57 @@
+Notation making is split into the following steps:
+
+    (1) User sets which tags should be fully represented in the score.
+
+            This happens during initialization of :class:`ClockToAbjadScore`.
+
+    (2) Mutwo detects all :class:`mutwo.timeline_interfaces.EventPlacement`
+        which include events with any of the given tags.
+
+            This happens in :class:`ClockToAbjadScore`. It actually
+            happens in the helper class :class:`TimeLineToEventPlacementTuple`.
+
+    (3) Mutwo splits all :class:`mutwo.timeline_interfaces.EventPlacement`s
+        so that each :class:`mutwo.timeline_interfaces.EventPlacement` only
+        contains exactly one tagged event. It creates a dict which maps
+        a tag to a tuple of sorted `EventPlacement`s.
+
+            This happens in :class:`ClockToAbjadScore`. It actually
+            happens in the helper class
+            :class:`EventPlacementTupleToSplitEventPlacementDict`.
+
+    (4) Mutwo inserts into the gaps new `EventPlacement`s which only contain
+        empty events (e.g. events with `duration == 0`). Here the complete
+        duration of the given `Clock` is provided, so that mutwo can
+        insert rests after the last `EventPlacement` of a specific tag.
+
+            This happens in :class:`ClockToAbjadScore`. It actually
+            happens in the helper class
+            :class:`EventPlacementTupleToGaplessEventPlacementTuple`.
+
+    (5) Mutwo creates for each `EventPlacement` and for each gap between
+        two sequential `EventPlacement`s a :class:`abjad.StaffGroup`.
+
+            This happens in :class:`ClockToAbjadScore`. It actually
+            happens in :class:`EventPlacementToAbjadStaffGroup`.
+            There is one instance of :class:`EventPlacementToAbjadStaffGroup`
+            for each tag. In this class all notation details (clef,
+            accidentals, etc.) are specified. It doesn't matter whether
+            the `EventPlacement` has any content or only a rest (= an event
+            with `duration == 0`). The
+            :class:`EventPlacementToAbjadStaffGroup` should take care
+            of both cases.
+
+    (6) Mutwo concatenates those :class:`abjad.StaffGroup` into one
+        sequential Lilypond container (e.g. enclosing it into '{' and '}'
+        parenthesis).
+
+            This happens in :class:`ClockToAbjadScore`. The sequential
+            staff groups should be concatenated due to lilyponds ability
+            of context concatenation. See also:
+
+                https://abjad.github.io/appendices/lilypond-context-concatenation.html
+
+    (7) Mutwo creates a :class:`abjad.Score` from all the
+        :class:`abjad.StaffGroup` containers.
+
+            This happens in :class:`ClockToAbjadScore`.
