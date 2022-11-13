@@ -3,14 +3,26 @@ with pkgs.python310Packages;
 
 let
 
-  mutwo-core-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.core/archive/61ebb657ef5806eb067f5df6885254fdbae8f44c.tar.gz";
+  mutwo-core-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.core/archive/83efe12fb98119e03db833c231f9c87956577b3f.tar.gz";
   mutwo-core = import (mutwo-core-archive + "/default.nix");
 
-  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/5a6e1d7b72ea584f00e091aeceb2a029cd8f5802.tar.gz";
+  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/295b9b6ef5ec5099fc940962513b5f30d284f9a0.tar.gz";
   mutwo-timeline = import (mutwo-timeline-archive + "/default.nix");
 
-  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/1d9114da453c040640d568fc260149ed4eccfe70.tar.gz";
+  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/0cd25e7e87ae61ebfb0343a59baf8b8564c24fca.tar.gz";
   mutwo-abjad = import (mutwo-abjad-archive + "/default.nix");
+
+  treelib = pkgs.python310Packages.buildPythonPackage rec {
+    name = "treelib";
+    src = fetchFromGitHub {
+      owner = "caesar0301";
+      repo = name;
+      rev = "12d7efd50829a5a18edaab01911b1e546bff2ede";
+      sha256 = "sha256-QGgWsMfPm4ZCSeU/ODY0ewg1mu/mRmtXgHtDyHT9dac=";
+    };
+    doCheck = true;
+    propagatedBuildInputs = [ python310Packages.future ];
+  };
 
 in
 
@@ -31,6 +43,7 @@ in
       mutwo-timeline
       mutwo-abjad
       lilypond-with-fonts
+      treelib
     ];
     checkPhase = ''
       runHook preCheck
