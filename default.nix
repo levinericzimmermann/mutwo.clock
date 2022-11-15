@@ -31,8 +31,8 @@ in
     src = fetchFromGitHub {
       owner = "levinericzimmermann";
       repo = name;
-      rev = "d8ec262438546cef6063ee797cc074a630c9bc4c";
-      sha256 = "sha256-YDGad5sDUKNt4UOf6jO/JwwyenDSgBYQA+H0Dt9b08A=";
+      rev = "6bd6aa841d79fc7a7c46e16b41bf843d9e93813a";
+      sha256 = "sha256-xLmC2+9bDwxAZ6yQ6P1y8umSkIuPerpD4kAwjp3fz84=";
     };
     checkInputs = [
       python310Packages.pytest
@@ -44,6 +44,7 @@ in
       mutwo-abjad
       lilypond-with-fonts
       treelib
+      python310Packages.numpy
     ];
     checkPhase = ''
       runHook preCheck
