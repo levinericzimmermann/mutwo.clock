@@ -9,9 +9,7 @@ VERSION = version["VERSION"]
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-extras_require = {
-    "testing": ["pytest>=7.1.1"]
-}
+extras_require = {"testing": ["pytest>=7.1.1"]}
 
 setuptools.setup(
     name="mutwo.clock",
@@ -37,6 +35,7 @@ setuptools.setup(
         "mutwo.music>=0.19.0, <1.0.0",
         "mutwo.timeline>=0.3.0, <0.4.0",
         "mutwo.abjad>=0.13.0, <1.0.0",
+        "numpy>=1.18, <2.00",
     ],
     extras_require=extras_require,
     python_requires=">=3.10, <4",

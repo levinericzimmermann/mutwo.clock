@@ -1,0 +1,113 @@
+clock generators
+================
+
+Basic clock generator is `treelib.Tree`.
+
+Each leaf represents one rhythmical layer.
+
+Each rhythmical layer leaks events.
+
+Each layer can only once leak an event, than it has
+to wait until all higher leaves leaked their event.
+
+Tree:
+
+    A -> B -> C
+           -> D
+
+
+Resulting event drop pattern:
+
+    A            A                        A
+    
+     B    B         B          B
+    
+       C    D          C   C       D
+
+
+Each Leaf has a minima and maxima event leak count.
+
+Only after all events have been leaked, the lower leaf
+can leak an event again.
+
+Furthermore - because it is an tree - one leaf can have
+more than one child leaves. Then it will cycle between
+both children.
+
+To receive a new clock from a tree the structure is:
+
+
+    1 tree = ...
+
+        We first need to define the event by declaring different
+        layers/leaves and stacking them on each other.
+
+    2. TreeToClockEvent.convert(tree, root_cycle_count)
+
+        Then we apply the procedure which has been described above.
+
+    3. event.post_process()
+
+        Finally we post-process the generated event by adding
+        additional data (e.g. more rests -> fermata, etc.)
+
+----
+
+
+What's nice is that a leaf generated event can literally be anything...
+
+    ...from a long SequentialEvent (which may have been generated from an earlier tree->clockevent call)
+
+    ...to a single SimpleEvent
+
+    ...to even no events at all (e.g. an empty SequentialEvent)
+
+
+This gives the technique the possibility to describe the very abstract
+to the very concrete.
+
+----
+
+
+Related objects / functions:
+
+
+    /clock_generators/clock_tree.py
+
+        -> ClockTree(treelib.Tree)
+        
+        -> ClockLayer(object)
+
+            -> CycleClockLayer(ClockLayer)
+            -> ...
+
+
+    /clock_converters/clock_tree.py
+
+        -> ClockTreeToClockEvent
+
+
+----
+
+
+Background:
+==========
+
+time is divided into
+
+    years
+
+        months
+
+            weeks
+
+                days
+
+                    hours
+                        
+                        minutes
+
+                            seconds
+
+
+This is very similar to colotomic structures.
