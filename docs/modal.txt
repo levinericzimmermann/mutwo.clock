@@ -1,0 +1,119 @@
+Modal Clocks
+============
+
+Modal clocks assume that each ClockLine has as an underlying musical structure a
+monophonic melody.
+
+    c e g f e c
+
+This monophonic melody is split into pairs of start and end tones and in scales which
+are valid during the interpolation from start to end tones:
+
+    c   ->   e      ; scale: c e fs as b
+    e   ->   g      ; scale: ds e g as b
+    g   ->   f      ; scale: ds f g a bf
+
+    etc.....
+
+Each interpolation is assigned to a sequential slice of the central clock.
+This sequential slice can be generated with a specific ClockTree.
+It can be only one ClockTree or multiple ClockTrees.
+In the second case it is possible to assign specific ClockTrees to
+specific melodic movements.
+
+For instance:
+
+    if interval is smaller than a second : ClockTree A
+    else                                 : ClockTree B
+
+(but this could really be anything)
+
+Between each interpolation there can be an additional separator.
+So we have the following structure:
+
+
+        c -> e          |   SEP     |   e -> g                |     SEP     |  etc.......
+        scale c->e      |           |   scale e -> g          |             |
+        clockEvent c->e |           |   clockEvent e -> g     |             |
+
+
+Each item in this structure is represented by `mutwo.clock_events.ModalEvent`.
+`mutwo.clock_events.SepModalEvent` are a subclass of `ModalEvent`.
+
+=====================================================================
+
+
+INSIDE MUTWO
+============
+
+
+Inside mutwo we therefore have the following structures:
+
+(Hint: we ignore separator for now.)
+
+
+1-----------------1---------------------------1--------------------1
+
+    'clock_events.ModalEvent'
+
+            - start_pitch
+            - end_pitch
+            - scale
+            - clock_event
+            - control_event
+
+        We can define modal events. It's sufficient to specify only
+        'start_pitch', 'end_pitch' and 'scale'. We can add 'clock_event'
+        and 'control_event' in the next step.
+
+        So we have something like
+
+            core_events.SequentialEvent[clock_events.ModalEvent]
+
+
+2-----------------2---------------------------2--------------------2
+
+    'clock_converters.ApplyClockTreeOnModalEvent'
+
+            - 'clock_converters.ModalEventToClockTree'
+            -> convert(event)
+
+        In this step we assign 'clock_event' and 'control_event' on
+        all 'ModalEvent' instances. For this we need to pass an
+        instance of 'clock_converters.ModalEventToClockTree' to
+        'clock_converters.ApplyClockTreeOnModalEvent'.
+
+
+3-----------------3---------------------------3--------------------3
+
+    'clock_converters.ModalSequentialEventToClockLine'
+
+            - 'modal_sequential_event_to_event_placement_tuple_sequence':
+                list[clock_converters.ModalSequentialEventToEventPlacementTuple]
+
+        Here the actual musical events are created. We have parallel
+        processes of music creation:
+            
+            a) clock event creation
+                
+                This is simple because we only need to concatenate
+                the clock events which are assigned to the 'ModalEvent'.
+
+            b) EventPlacement creation
+
+                Event placements are created from independent converters.
+                It's not like
+                    
+                    "CONVERTER A = creates all events for INSTRUMENT A"
+
+                but more like
+
+                    "CONVERTER A = creates all events of type/algorithm A"
+
+                because some converters may assign multiple instruments
+                within one event placement.
+
+                This means there is nothing to prevent two independent
+                event placement algorithms from creating overlapping events.
+                Overlapping events therefore need to be solved somewhere
+                else.

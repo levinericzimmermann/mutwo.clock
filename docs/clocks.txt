@@ -1,0 +1,6 @@
+Clocks
+======
+
+There are multiple musical structures which are build on top of the clock structure.
+
+The musical structures are described in the single papers.
