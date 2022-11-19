@@ -27,6 +27,8 @@ Resulting event drop pattern:
 
 Each Leaf has a minima and maxima event leak count.
 
+    -> `event_count_range`
+
 Only after all events have been leaked, the lower leaf
 can leak an event again.
 

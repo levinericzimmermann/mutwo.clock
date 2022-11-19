@@ -117,11 +117,38 @@ class ClockLayerTest(unittest.TestCase):
     def test_pop_event(self):
         self.assertEqual(
             self.leaf_node.data.pop_event(),
-            core_events.SequentialEvent([core_events.SimpleEvent(1)]),
+            (
+                core_events.SequentialEvent([core_events.SimpleEvent(1)]),
+                core_events.SimultaneousEvent(
+                    [
+                        core_events.TaggedSequentialEvent(
+                            [core_events.SimpleEvent(1).set("is_active", True)],
+                            tag="leaf",
+                        )
+                    ]
+                ),
+            ),
         )
         self.assertEqual(
             self.root_node.data.pop_event(),
-            core_events.SequentialEvent(
-                [core_events.SimpleEvent(10), core_events.SimpleEvent(1)]
+            (
+                core_events.SequentialEvent(
+                    [core_events.SimpleEvent(10), core_events.SimpleEvent(1)]
+                ),
+                core_events.SimultaneousEvent(
+                    [
+                        core_events.TaggedSequentialEvent(
+                            [core_events.SimpleEvent(11).set("is_active", True)],
+                            tag="root",
+                        ),
+                        core_events.TaggedSequentialEvent(
+                            [
+                                core_events.SimpleEvent(10).set("is_active", False),
+                                core_events.SimpleEvent(1).set("is_active", True),
+                            ],
+                            tag="leaf",
+                        ),
+                    ]
+                ),
             ),
         )
