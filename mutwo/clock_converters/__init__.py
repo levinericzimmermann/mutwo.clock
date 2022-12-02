@@ -1,9 +1,5 @@
 from . import configurations
 
-# PATCH SIMULTANEOUS EVENT.
-# this should finally move to mutwo.core.
-from . import core_patch
-
 from .abjad import *
 from .clocks import *
 from .clock_trees import *

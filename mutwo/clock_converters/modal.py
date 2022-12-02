@@ -8,6 +8,7 @@ from mutwo import clock_generators
 from mutwo import core_converters
 from mutwo import core_events
 from mutwo import core_parameters
+from mutwo import core_utilities
 from mutwo import timeline_interfaces
 
 __all__ = (
@@ -83,7 +84,7 @@ class ModalSequentialEventToClockEvent(core_converters.abc.Converter):
             for successor in clock_event_list[1:]:
                 try:
                     clock_event.concatenate_by_tag(successor)
-                except clock_converters.core_patch.NoTagError:
+                except core_utilities.NoTagError:
                     clock_event.concatenate_by_index(successor)
 
             return clock_event

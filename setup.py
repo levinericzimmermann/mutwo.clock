@@ -31,7 +31,7 @@ setuptools.setup(
     ],
     setup_requires=[],
     install_requires=[
-        "mutwo.core>=1.0.1, <2.0.0",
+        "mutwo.core>=1.2.0, <2.0.0",
         "mutwo.music>=0.19.0, <1.0.0",
         "mutwo.timeline>=0.3.0, <0.4.0",
         "mutwo.abjad>=0.13.0, <1.0.0",
