@@ -28,17 +28,18 @@ For instance:
 
 (but this could really be anything)
 
-Between each interpolation there can be an additional separator.
+Between each interpolation there can be one or more additional separators.
 So we have the following structure:
 
 
-        c -> e          |   SEP     |   e -> g                |     SEP     |  etc.......
-        scale c->e      |           |   scale e -> g          |             |
-        clockEvent c->e |           |   clockEvent e -> g     |             |
+        c -> e            |   SEP     |   e -> g                |     SEP     |  etc.......
+        scale c -> e      |           |   scale e -> g          |             |
+        clockEvent c -> e |           |   clockEvent e -> g     |             |
 
 
-Each item in this structure is represented by `mutwo.clock_events.ModalEvent`.
-`mutwo.clock_events.SepModalEvent` are a subclass of `ModalEvent`.
+Each interpolation in this structure is represented by `mutwo.clock_events.ModalEvent`.
+Seperator are `mutwo.core_events.SimpleEvent` or any other event which doesn't look like a
+`mutwo.clock_events.ModalEvent` to mutwo.
 
 =====================================================================
 

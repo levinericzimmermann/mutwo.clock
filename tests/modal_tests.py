@@ -89,10 +89,10 @@ def scale():
     )
 
 
-@pytest.fixture
-def modal_sequential_event(scale: music_parameters.Scale):
+@pytest.fixture(params=[{"rest": False}, {"rest": True}])
+def modal_sequential_event(scale: music_parameters.Scale, request):
     scale_position_tuple = ((0, 0), (3, 0), (4, -1), (1, 0))
-    return core_events.SequentialEvent(
+    sequential_event = core_events.SequentialEvent(
         [
             clock_events.ModalEvent(
                 scale.scale_position_to_pitch(scale_position0),
@@ -104,6 +104,11 @@ def modal_sequential_event(scale: music_parameters.Scale):
             )
         ]
     )
+    if request.param["rest"]:
+        for _ in range(2):
+            sequential_event.insert(1, core_events.SimpleEvent(3))
+        sequential_event.append(core_events.SimpleEvent(4))
+    return sequential_event
 
 
 def _apply_clock_tree_on_modal_event(
@@ -149,8 +154,8 @@ def test_modal_sequential_event_to_clock_event(
         modal_sequential_event_with_clock_tree
     )
     assert clock_event
-
     assert clock_event[0][0].pitch_list == [music_parameters.JustIntonationPitch("1/1")]
+    assert clock_event.duration == modal_sequential_event_with_clock_tree.duration
 
 
 def test_modal_sequential_event_to_event_placement_tuple(

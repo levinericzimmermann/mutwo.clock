@@ -1,3 +1,5 @@
+"""Make event placements from ModalSequentialEvent."""
+
 import abc
 import typing
 
@@ -18,6 +20,10 @@ __all__ = (
     "ModalSequentialEventToClockLine",
     "ModalSequentialEventToClockEvent",
 )
+
+ModalSequentialEvent: typing.TypeAlias = core_events.SequentialEvent[
+    clock_events.ModalEvent | core_events.SimpleEvent
+]
 
 
 class ModalEventToClockTree(core_converters.abc.Converter):
@@ -61,23 +67,31 @@ class ModalSequentialEventToEventPlacementTuple(core_converters.abc.Converter):
     @abc.abstractmethod
     def convert(
         self,
-        modal_sequential_event_to_convert: core_events.SequentialEvent[
-            clock_events.ModalEvent
-        ],
+        modal_sequential_event_to_convert: ModalSequentialEvent,
     ) -> tuple[timeline_interfaces.EventPlacement, ...]:
         ...
 
 
 class ModalSequentialEventToClockEvent(core_converters.abc.Converter):
+    """Create ClockEvent from ModalSequentialEvent"""
+
     def convert(
         self,
-        modal_sequential_event_to_convert: core_events.SequentialEvent[
-            clock_events.ModalEvent
-        ],
+        modal_sequential_event_to_convert: ModalSequentialEvent,
     ) -> clock_events.ClockEvent:
-        clock_event_list = [
-            modal_event.clock_event for modal_event in modal_sequential_event_to_convert
-        ]
+        clock_event_list = []
+        for modal_event in modal_sequential_event_to_convert:
+            try:
+                clock_event = modal_event.clock_event
+            except AttributeError:
+                clock_event = clock_events.ClockEvent()
+                if (modal_event_duration := modal_event.duration) > 0:
+                    clock_event.append(
+                        core_events.SequentialEvent(
+                            [core_events.SimpleEvent(modal_event_duration)]
+                        )
+                    )
+            clock_event_list.append(clock_event)
 
         if clock_event_list:
             clock_event = clock_event_list[0].copy()
@@ -109,9 +123,7 @@ class ModalSequentialEventToClockLine(core_converters.abc.Converter):
 
     def convert(
         self,
-        modal_sequential_event_to_convert: core_events.SequentialEvent[
-            clock_events.ModalEvent
-        ],
+        modal_sequential_event_to_convert: ModalSequentialEvent,
     ) -> clock_interfaces.ClockLine:
         clock_event = self._modal_sequential_event_to_clock_event(
             modal_sequential_event_to_convert
