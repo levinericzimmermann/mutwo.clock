@@ -16,6 +16,15 @@ class _SequentialEventToAbjadStaff(abjad_converters.SequentialEventToAbjadVoice)
 
     def convert(self, *args, **kwargs) -> abjad.Staff:
         voice = super().convert(*args, **kwargs)
+        voice._consists_commands = []
+        first_leaf = self._abjad.select.leaves(voice)[0]
+        self._abjad.attach(
+            self._abjad.LilyPondLiteral(
+                r"\omit Stem \omit Flag"
+                r"\omit Beam \override NoteHead.duration-log = 2"
+            ),
+            first_leaf,
+        )
         return self._abjad.Staff([voice])
 
 
@@ -24,7 +33,7 @@ DEFAULT_COMPLEX_EVENT_TO_ABJAD_CONTAINER = (
         abjad_converters.CycleBasedNestedComplexEventToComplexEventToAbjadContainers(
             (
                 _SequentialEventToAbjadStaff(
-                    abjad_converters.LeafMakerSequentialEventToQuantizedAbjadContainer(
+                    abjad_converters.LeafMakerSequentialEventToDurationLineBasedQuantizedAbjadContainer(
                         event_to_time_signature_tuple=_event_to_time_signature_tuple
                     ),
                     # Default case: we don't print any tempo
