@@ -28,8 +28,8 @@ in
     src = fetchFromGitHub {
       owner = "levinericzimmermann";
       repo = name;
-      rev = "708221a4243b7debc72a8706a086dd541a618ffd";
-      sha256 = "sha256-O4zRhTHQ9S0/QORfGLUPvn2BCzswlMVMlMwO95c8FTE=";
+      rev = "9704d8775bfc02197174178a532f7ae5f22be388";
+      sha256 = "sha256-k0AtMml+XnHiWP6vZkGS9GSTb3eZ/C8RNF3BE5xAq2Q=";
     };
     checkInputs = [
       python310Packages.pytest
