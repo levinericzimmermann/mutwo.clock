@@ -337,6 +337,7 @@ class ClockToAbjadScore(core_converters.abc.Converter):
         tag_tuple: tuple[Tag, ...],
     ) -> abjad.Score:
         abjad_score = abjad.Score([])
+        abjad_score.remove_commands.append("System_start_delimiter_engraver")
         self._add_clock_events_to_abjad_score(clock_to_convert, abjad_score)
         self._add_event_placements_to_abjad_score(
             clock_to_convert, tag_tuple, abjad_score
