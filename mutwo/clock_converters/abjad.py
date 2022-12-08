@@ -357,6 +357,15 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
   \override VerticalAxisGroup.remove-first = ##t
   % If only one non-empty staff in a system exists, still print the starting bar
   \override SystemStartBar.collapse-height = #1
+  % Avoid bar lines from time signatures of other staff groups
+  % (move them to Staff context).
+  \consists "Timing_translator"
+  \consists "Default_bar_line_engraver"
+}
+\context {
+  \Staff
+  \consists "Timing_translator"
+  \consists "Default_bar_line_engraver"
 }
 """
         )
