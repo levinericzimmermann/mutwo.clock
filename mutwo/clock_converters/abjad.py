@@ -225,7 +225,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 abjad.attach(
                     abjad.LilyPondLiteral(
                         r"\undo \omit Staff.BarLine "
-                        r"\undo \omit Score.BarLine"
+                        r"\undo \omit Score.BarLine "
                         r'\bar  ":|."',
                         site="after",
                     ),
