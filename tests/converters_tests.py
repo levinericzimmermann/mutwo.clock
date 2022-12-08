@@ -50,8 +50,45 @@ class ClockToAbjadScoreTest(unittest.TestCase):
                 )
             ]
         )
-        self.start_event_placement_list = []
+        self.start_event_placement_list = [
+            timeline_interfaces.EventPlacement(
+                core_events.SimultaneousEvent(
+                    [
+                        core_events.TaggedSimultaneousEvent(
+                            [
+                                core_events.SequentialEvent(
+                                    [
+                                        music_events.NoteLike("d", 1),
+                                    ]
+                                )
+                            ],
+                            tag=self.tag_2,
+                        )
+                    ]
+                ),
+                0,
+                1,
+            ),
+        ]
         self.event_placement_list = [
+            timeline_interfaces.EventPlacement(
+                core_events.SimultaneousEvent(
+                    [
+                        core_events.TaggedSimultaneousEvent(
+                            [
+                                core_events.SequentialEvent(
+                                    [
+                                        music_events.NoteLike("d", 1),
+                                    ]
+                                )
+                            ],
+                            tag=self.tag_2,
+                        )
+                    ]
+                ),
+                0,
+                1,
+            ),
             timeline_interfaces.EventPlacement(
                 core_events.SimultaneousEvent(
                     [
@@ -114,7 +151,9 @@ class ClockToAbjadScoreTest(unittest.TestCase):
         self.clockline = clock_interfaces.ClockLine(
             self.clock_event, self.event_placement_list
         )
-        self.clock = clock_interfaces.Clock(self.clockline, self.start_clockline, self.start_clockline)
+        self.clock = clock_interfaces.Clock(
+            self.clockline, self.start_clockline, self.start_clockline
+        )
 
     def test_convert(self):
         abjad_score = self.clock_to_abjad_score.convert(self.clock, (self.tag_2,))
