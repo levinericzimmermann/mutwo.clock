@@ -371,8 +371,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
   \override SystemStartBar.collapse-height = #1
   % Avoid bar lines from time signatures of other staff groups
   % (move them to Staff context).
-  \consists "Timing_translator"
-  \consists "Default_bar_line_engraver"
+  \remove "Timing_translator"
+  \remove "Default_bar_line_engraver"
   % Allow breaks between bar lines
   % (this is important because we have)
   % (only very few bar lines).
