@@ -111,7 +111,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                             (
                                 r"\startStaff",
                                 r"\override Score.BarNumber.break-visibility = #all-invisible",
-                                r"\undo \omit Staff.Clef",
+                                r"\once \undo \omit Staff.Clef",
                                 r"\omit Staff.BarLine",
                                 r"\override Staff.BarLine.allow-span-bar = ##f",
                                 r"\override Staff.Clef.break-visibility = #all-invisible",
@@ -212,8 +212,8 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
             first_leaf, last_leaf = leaf_selection[0], leaf_selection[-1]
             first_leaf_before = (
                 r"\omit Staff.TimeSignature "
-                r"\undo \omit Staff.BarLine "
-                r"\undo \omit Score.BarLine "
+                r"\once \undo \omit Staff.BarLine "
+                r"\once \undo \omit Score.BarLine "
                 rf"\magnifyStaff #(magstep {magnification_size})"
             )
             if is_repeating:
@@ -236,8 +236,8 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
             if is_repeating:
                 abjad.attach(
                     abjad.LilyPondLiteral(
-                        r"\undo \omit Staff.BarLine "
-                        r"\undo \omit Score.BarLine "
+                        r"\once \undo \omit Staff.BarLine "
+                        r"\once \undo \omit Score.BarLine "
                         r'\bar  ":|."',
                         site="after",
                     ),
