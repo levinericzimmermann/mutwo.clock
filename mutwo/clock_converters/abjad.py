@@ -455,6 +455,14 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
       )
         """
         )
+        paper_block.items.append(
+r"""
+#(define fonts
+    (set-global-fonts
+     #:music "beethoven"
+     #:brace "beethoven"
+    )
+)""")
         return paper_block
 
     def convert(
