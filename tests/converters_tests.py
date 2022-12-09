@@ -157,11 +157,15 @@ class ClockToAbjadScoreTest(unittest.TestCase):
 
     def test_convert(self):
         abjad_score = self.clock_to_abjad_score.convert(self.clock, (self.tag_2,))
+
+        # Add sample text to check font
+        leaf0 = abjad.select.leaves(abjad_score)[1]
+        abjad.attach(abjad.Markup("\markup { this is some sample text }"), leaf0)
+
         abjad_score_block = clock_converters.AbjadScoreToAbjadScoreBlock().convert(
             abjad_score
         )
         lilypond_file = clock_converters.AbjadScoreBlockTupleToLilyPondFile().convert(
             [abjad_score_block]
         )
-        print(abjad.lilypond(lilypond_file))
         abjad.persist.as_pdf(lilypond_file, "test.pdf")
