@@ -360,6 +360,11 @@ class ClockToAbjadScore(core_converters.abc.Converter):
 class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
     def get_abjad_layout_block(self, moment: int = 4) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
+        abjad_layout_block.items.append(
+            r"""
+ragged-right = ##f
+ragged-last = ##f"""
+        )
         abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
         abjad_layout_block.items.append(
             r"""
