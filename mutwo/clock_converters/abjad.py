@@ -446,10 +446,13 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         paper_block.items.append(
             r"system-system-spacing = #'((basic-distance . 25.1) (padding . 10))"
         )
+        font = "Liberation Mono"
         paper_block.items.append(
-            r"""
+            fr"""
     #(define fonts
-        (make-pango-font-tree "EB Garamond" "Nimbus Sans" "Luxi Mono" (/ staff-height pt 20)))
+        (make-pango-font-tree "{font}" "{font}" "{font}"
+        (/ staff-height pt 20))
+      )
         """
         )
         return paper_block
