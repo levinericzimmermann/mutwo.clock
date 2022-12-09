@@ -425,6 +425,7 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
 class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
     def __init__(self, with_point_and_click: bool = False):
         self._with_point_and_click = with_point_and_click
+
     def get_header_block(
         self,
         title: typing.Optional[str] = None,
@@ -450,7 +451,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         )
         font = "Liberation Mono"
         paper_block.items.append(
-            fr"""
+            rf"""
     #(define fonts
         (make-pango-font-tree "{font}" "{font}" "{font}"
         (/ staff-height pt 20))
@@ -458,13 +459,15 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         """
         )
         paper_block.items.append(
-r"""
+            r"""
 #(define fonts
     (set-global-fonts
      #:music "beethoven"
      #:brace "beethoven"
     )
-)""")
+)"""
+        )
+        paper_block.items.append(r"print-first-page-number = ##t")
         return paper_block
 
     def convert(
