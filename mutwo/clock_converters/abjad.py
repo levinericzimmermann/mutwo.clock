@@ -361,11 +361,25 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
   % (move them to Staff context).
   \consists "Timing_translator"
   \consists "Default_bar_line_engraver"
+  % Allow breaks between bar lines
+  % (this is important because we have)
+  % (only very few bar lines).
+  % !forbidBreakBetweenBarLines = ##f
+  % !forbidBreakBetweenBarLines doesn't exist yet in 2.22,
+  % !it's only available from 2.23. Once migrated to next
+  % !stable release I should remove the 'barAlways' and use
+  % !forbidBreakBetweenBarLines !
+  barAlways = ##t
 }
 \context {
   \Staff
   \consists "Timing_translator"
   \consists "Default_bar_line_engraver"
+}
+\context {
+  \Voice
+  % Allow line breaks with tied notes
+  \remove Forbid_line_break_engraver
 }
 """
         )
