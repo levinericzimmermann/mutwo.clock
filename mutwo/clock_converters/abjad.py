@@ -445,7 +445,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
 
     def get_paper_block(self) -> abjad.Block:
         paper_block = abjad.Block("paper")
-        paper_block.items.append(r"system-separator-markup = \slashSeparator")
+        # paper_block.items.append(r"system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }")
         paper_block.items.append(
             r"system-system-spacing = #'((basic-distance . 25.1) (padding . 10))"
         )
