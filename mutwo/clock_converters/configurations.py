@@ -20,7 +20,7 @@ class _SequentialEventToAbjadStaff(abjad_converters.SequentialEventToAbjadVoice)
         first_leaf = self._abjad.select.leaves(voice)[0]
         self._abjad.attach(
             self._abjad.LilyPondLiteral(
-                r"\omit Stem \omit Flag"
+                r"\omit Stem \omit Flag "
                 r"\omit Beam \override NoteHead.duration-log = 2"
             ),
             first_leaf,
