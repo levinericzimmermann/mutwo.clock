@@ -61,6 +61,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         self,
         tag: str,
         written_duration: fractions.Fraction,
+        real_duration: fractions.Fraction,
         scale_durations: str,
     ) -> abjad.StaffGroup:
         staff_group = abjad.StaffGroup([], name=tag)
@@ -68,6 +69,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
+                    rf"\time {real_duration.numerator}/{real_duration.denominator} "
                     r"\override Score.BarNumber.break-visibility = #all-invisible"
                     "\n"
                     r"\omit Staff.BarLine \omit StaffGroup.BarLine "
@@ -90,16 +92,9 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
     def _convert_event(
         self,
         scale_durations: str,
+        real_duration: fractions.Fraction,
         event_to_convert: core_events.TaggedSimultaneousEvent,
     ):
-        event_duration = event_to_convert.duration.duration
-        time_signature = abjad.TimeSignature(
-            (event_duration.numerator, event_duration.denominator)
-        )
-        time_signature_tuple = (time_signature, time_signature)
-        for sequential_event in event_to_convert:
-            sequential_event.time_signature_tuple = time_signature_tuple
-
         abjad_staff_group = self._complex_event_to_abjad_container.convert(
             event_to_convert
         )
@@ -129,9 +124,22 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                     ),
                     first_leaf,
                 )
+                is_first = True
                 for leaf in leaf_selection:
+                    before_literal = f"{scale_durations} {{"
+                    if is_first:
+                        before_literal = (
+                            rf"\time {real_duration.numerator}/{real_duration.denominator} "
+                            + before_literal
+                        )
+                        is_first = False
+                    # Avoid default 4/4 time signature (it's meaningless here)
+                    abjad.detach(abjad.TimeSignature, leaf)
                     abjad.attach(
-                        abjad.LilyPondLiteral(f"{scale_durations} {{", site="before"),
+                        abjad.LilyPondLiteral(
+                            before_literal,
+                            site="before",
+                        ),
                         leaf,
                     )
                     abjad.attach(abjad.LilyPondLiteral("}", site="after"), leaf)
@@ -154,8 +162,12 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
 
         if is_rest:
             tag, *_ = event_placement_to_convert.tag_tuple
-            return self._convert_rest(tag, written_duration, scale_durations)
-        return self._convert_event(scale_durations, simultaneous_event[0])
+            return self._convert_rest(
+                tag, written_duration, real_duration, scale_durations
+            )
+        return self._convert_event(
+            scale_durations, real_duration, simultaneous_event[0]
+        )
 
 
 class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
