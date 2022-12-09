@@ -423,6 +423,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
 
 
 class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
+    def __init__(self, with_point_and_click: bool = False):
+        self._with_point_and_click = with_point_and_click
     def get_header_block(
         self,
         title: typing.Optional[str] = None,
@@ -473,6 +475,8 @@ r"""
         header_block = self.get_header_block()
         paper_block = self.get_paper_block()
 
+        if not self._with_point_and_click:
+            lilypond_file.items.append(r"\pointAndClickOff")
         lilypond_file.items.append(r'#(set-default-paper-size "a4" ' "'landscape)")
         lilypond_file.items.append(header_block)
         lilypond_file.items.append(paper_block)
