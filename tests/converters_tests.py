@@ -160,7 +160,7 @@ class ClockToAbjadScoreTest(unittest.TestCase):
 
         # Add sample text to check font
         leaf0 = abjad.select.leaves(abjad_score)[1]
-        abjad.attach(abjad.Markup("\markup { this is some sample text }"), leaf0)
+        abjad.attach(abjad.Markup(r"\markup { this is some sample text }"), leaf0)
 
         abjad_score_block = clock_converters.AbjadScoreToAbjadScoreBlock().convert(
             abjad_score
