@@ -69,7 +69,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
-                    rf"\time {real_duration.numerator}/{real_duration.denominator} "
+                    #  rf"\time {real_duration.numerator}/{real_duration.denominator} "
                     r"\override Score.BarNumber.break-visibility = #all-invisible"
                     "\n"
                     r"\omit Staff.BarLine \omit StaffGroup.BarLine "
@@ -127,12 +127,12 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                 is_first = True
                 for leaf in leaf_selection:
                     before_literal = f"{scale_durations} {{"
-                    if is_first:
-                        before_literal = (
-                            rf"\time {real_duration.numerator}/{real_duration.denominator} "
-                            + before_literal
-                        )
-                        is_first = False
+                    # if is_first:
+                    #     before_literal = (
+                    #         rf"\time {real_duration.numerator}/{real_duration.denominator} "
+                    #         + before_literal
+                    #     )
+                    #     is_first = False
                     # Avoid default 4/4 time signature (it's meaningless here)
                     abjad.detach(abjad.TimeSignature, leaf)
                     abjad.attach(
