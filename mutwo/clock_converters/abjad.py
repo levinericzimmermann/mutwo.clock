@@ -156,7 +156,9 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         if is_rest := (written_duration == 0):
             written_duration = 1
 
-        ratio = real_duration / written_duration
+        # NOTE: limit_denominator is necessary, because Lilypond will complain
+        # otherwise and will simply hide notes.
+        ratio = (real_duration / written_duration).limit_denominator(10000)
 
         scale_durations = rf"\scaleDurations {ratio.numerator}/{ratio.denominator}"
 
