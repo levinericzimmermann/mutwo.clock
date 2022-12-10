@@ -211,6 +211,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
             leaf_selection = abjad.select.leaves(abjad_staff_group)
             first_leaf, last_leaf = leaf_selection[0], leaf_selection[-1]
             first_leaf_before = (
+                r"\omit Staff.BarLine \omit Score.BarLine "
                 r"\omit Staff.TimeSignature "
                 r"\once \undo \omit Staff.BarLine "
                 r"\once \undo \omit Score.BarLine "
