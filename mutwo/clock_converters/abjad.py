@@ -365,8 +365,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         abjad_layout_block = abjad.Block("layout")
         abjad_layout_block.items.append(
             r"""
-ragged-right = ##f
-ragged-last = ##f"""
+ragged-right = ##t
+ragged-last = ##t"""
         )
         abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
         abjad_layout_block.items.append(
