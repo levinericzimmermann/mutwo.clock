@@ -61,7 +61,6 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         self,
         tag: str,
         written_duration: fractions.Fraction,
-        real_duration: fractions.Fraction,
         scale_durations: str,
     ) -> abjad.StaffGroup:
         staff_group = abjad.StaffGroup([], name=tag)
@@ -69,7 +68,6 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
-                    #  rf"\time {real_duration.numerator}/{real_duration.denominator} "
                     r"\override Score.BarNumber.break-visibility = #all-invisible"
                     "\n"
                     r"\omit Staff.BarLine \omit StaffGroup.BarLine "
@@ -92,7 +90,6 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
     def _convert_event(
         self,
         scale_durations: str,
-        real_duration: fractions.Fraction,
         event_to_convert: core_events.TaggedSimultaneousEvent,
     ):
         abjad_staff_group = self._complex_event_to_abjad_container.convert(
@@ -124,16 +121,8 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                     ),
                     first_leaf,
                 )
-                is_first = True
                 for leaf in leaf_selection:
                     before_literal = f"{scale_durations} {{"
-                    # if is_first:
-                    #     before_literal = (
-                    #         rf"\time {real_duration.numerator}/{real_duration.denominator} "
-                    #         + before_literal
-                    #     )
-                    #     is_first = False
-                    # Avoid default 4/4 time signature (it's meaningless here)
                     abjad.detach(abjad.TimeSignature, leaf)
                     abjad.attach(
                         abjad.LilyPondLiteral(
@@ -165,10 +154,10 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         if is_rest:
             tag, *_ = event_placement_to_convert.tag_tuple
             return self._convert_rest(
-                tag, written_duration, real_duration, scale_durations
+                tag, written_duration, scale_durations
             )
         return self._convert_event(
-            scale_durations, real_duration, simultaneous_event[0]
+            scale_durations, simultaneous_event[0]
         )
 
 
