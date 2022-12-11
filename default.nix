@@ -6,7 +6,7 @@ let
   mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/66534ff86647fd22ee2b23379a04cf0400617a0d.tar.gz";
   mutwo-timeline = import (mutwo-timeline-archive + "/default.nix");
 
-  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/d7907a03ef9d1fed05c574456f1529b42bba84e8.tar.gz";
+  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/a05a508b1ad838d18ddb6287844b1090bc50a371.tar.gz";
   mutwo-abjad = import (mutwo-abjad-archive + "/default.nix");
 
   treelib = pkgs.python310Packages.buildPythonPackage rec {
