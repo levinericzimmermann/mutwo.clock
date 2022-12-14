@@ -419,14 +419,24 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
     def __init__(
         self,
         with_point_and_click: bool = False,
-        padding: float = 4,
-        basic_distance: float = 15,
+        add_page_break_between_clock: bool = True,
+        system_system_padding: float = 4,
+        system_system_basic_distance: float = 15,
+        score_system_padding: float = 4,
+        score_system_basic_distance: float = 15,
+        markup_system_padding: float = 4,
+        markup_system_basic_distance: float = 15,
         staff_height: float = 20,
     ):
         self._with_point_and_click = with_point_and_click
-        self._padding = padding
-        self._basic_distance = basic_distance
+        self._system_system_padding = system_system_padding
+        self._system_system_basic_distance = system_system_basic_distance
+        self._score_system_padding = score_system_padding
+        self._score_system_basic_distance = score_system_basic_distance
+        self._markup_system_padding = markup_system_padding
+        self._markup_system_basic_distance = markup_system_basic_distance
         self._staff_height = staff_height
+        self._add_page_break_between_clock = add_page_break_between_clock
 
     def get_header_block(
         self,
@@ -449,9 +459,20 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         paper_block = abjad.Block("paper")
         # paper_block.items.append(r"system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }")
         paper_block.items.append(
-            rf"""system-system-spacing = #'(
-    (basic-distance . {self._basic_distance}) (padding . {self._padding})
-)"""
+            rf"""
+system-system-spacing = #'(
+    (basic-distance . {self._system_system_basic_distance})
+    (padding . {self._system_system_padding})
+)
+score-system-spacing = #'(
+    (basic-distance . {self._score_system_basic_distance})
+    (padding . {self._score_system_basic_distance})
+)
+markup-system-spacing = #'(
+    (basic-distance . {self._markup_system_basic_distance})
+    (padding . {self._markup_system_basic_distance})
+)
+"""
         )
         font = "Liberation Mono"
         paper_block.items.append(
@@ -494,6 +515,12 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         lilypond_file.items.append(r'#(set-default-paper-size "a4" ' "'landscape)")
         lilypond_file.items.append(header_block)
         lilypond_file.items.append(paper_block)
-        lilypond_file.items.extend(abjad_score_block_tuple_to_convert)
+
+        for abjad_score_block in abjad_score_block_tuple_to_convert:
+            lilypond_file.items.append(abjad_score_block)
+            lilypond_file.items.append("\n")
+            if self._add_page_break_between_clock:
+                lilypond_file.items.append(r"\pageBreak")
+                lilypond_file.items.append("\n")
 
         return lilypond_file
