@@ -30,6 +30,9 @@ class Clock(object):
     start_clock_line: typing.Optional[ClockLine] = None
     end_clock_line: typing.Optional[ClockLine] = None
 
+    def __iter__(self) -> typing.Iterable[ClockLine | None]:
+        return iter((self.start_clock_line, self.main_clock_line, self.end_clock_line))
+
     @property
     def clock_line_tuple(self) -> tuple[ClockLine, ClockLine, ClockLine]:
         return (self.start_clock_line, self.main_clock_line, self.end_clock_line)
