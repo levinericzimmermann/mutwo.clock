@@ -153,12 +153,8 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
 
         if is_rest:
             tag, *_ = event_placement_to_convert.tag_tuple
-            return self._convert_rest(
-                tag, written_duration, scale_durations
-            )
-        return self._convert_event(
-            scale_durations, simultaneous_event[0]
-        )
+            return self._convert_rest(tag, written_duration, scale_durations)
+        return self._convert_event(scale_durations, simultaneous_event[0])
 
 
 class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
@@ -420,8 +416,17 @@ ragged-last = ##t"""
 
 
 class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
-    def __init__(self, with_point_and_click: bool = False):
+    def __init__(
+        self,
+        with_point_and_click: bool = False,
+        padding: float = 4,
+        basic_distance: float = 15,
+        staff_height: float = 20,
+    ):
         self._with_point_and_click = with_point_and_click
+        self._padding = padding
+        self._basic_distance = basic_distance
+        self._staff_height = staff_height
 
     def get_header_block(
         self,
@@ -444,14 +449,16 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         paper_block = abjad.Block("paper")
         # paper_block.items.append(r"system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }")
         paper_block.items.append(
-            r"system-system-spacing = #'((basic-distance . 25.1) (padding . 10))"
+            rf"""system-system-spacing = #'(
+    (basic-distance . {self._basic_distance}) (padding . {self._padding})
+)"""
         )
         font = "Liberation Mono"
         paper_block.items.append(
             rf"""
     #(define fonts
         (make-pango-font-tree "{font}" "{font}" "{font}"
-        (/ staff-height pt 20))
+        (/ staff-height pt {self._staff_height}))
       )
         """
         )
@@ -468,11 +475,18 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         return paper_block
 
     def convert(
-        self, abjad_score_block_tuple_to_convert: tuple[abjad.Block, ...]
+        self,
+        abjad_score_block_tuple_to_convert: tuple[abjad.Block, ...],
+        title: typing.Optional[str] = None,
+        composer: typing.Optional[str] = None,
+        year: typing.Optional[str] = None,
+        tagline: str = '""',
     ) -> abjad.LilyPondFile:
         lilypond_file = abjad.LilyPondFile([])
 
-        header_block = self.get_header_block()
+        header_block = self.get_header_block(
+            title=title, composer=composer, year=year, tagline=tagline
+        )
         paper_block = self.get_paper_block()
 
         if not self._with_point_and_click:
