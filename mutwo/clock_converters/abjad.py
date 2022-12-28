@@ -346,20 +346,23 @@ class ClockToAbjadScore(core_converters.abc.Converter):
 
 
 class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
-    def get_abjad_layout_block(self, moment: int = 4) -> abjad.Block:
+    def get_abjad_layout_block(
+        self, moment: int = 4, remove_empty_staves: bool = False
+    ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
         abjad_layout_block.items.append(
             r"""
 ragged-right = ##t
 ragged-last = ##t"""
         )
-        abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
+        if remove_empty_staves:
+            abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
         abjad_layout_block.items.append(
             r"""
 \context {
   \Score
-  % Remove all-rest staves also in the first system
-  \override VerticalAxisGroup.remove-first = ##t
+  % DEACTIVATED: Remove all-rest staves also in the first system
+  % \override VerticalAxisGroup.remove-first = ##t
   % If only one non-empty staff in a system exists, still print the starting bar
   \override SystemStartBar.collapse-height = #1
   % Avoid bar lines from time signatures of other staff groups
@@ -406,11 +409,16 @@ ragged-last = ##t"""
         return abjad_layout_block
 
     def convert(
-        self, abjad_score_to_convert: abjad.Score, moment: int = 4
+        self,
+        abjad_score_to_convert: abjad.Score,
+        remove_empty_staves: bool = False,
+        moment: int = 4,
     ) -> abjad.Block:
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
-        abjad_layout_block = self.get_abjad_layout_block(moment)
+        abjad_layout_block = self.get_abjad_layout_block(
+            moment, remove_empty_staves=remove_empty_staves
+        )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block
 
