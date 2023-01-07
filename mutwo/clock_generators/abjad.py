@@ -12,18 +12,21 @@ def make_complex_event_to_abjad_container(
     sequential_event_to_quantized_abjad_container_kwargs={},
     sequential_event_to_abjad_staff_class=None,
     sequential_event_to_quantized_abjad_container_class=abjad_converters.LeafMakerSequentialEventToDurationLineBasedQuantizedAbjadContainer,
+    duration_line: bool = False,
 ):
     """Create standard abjad converter for clock lines.
 
     This function provides various parameters to adjust converter
     definition without rewriting everything.
     """
+
     class _SequentialEventToAbjadStaff(abjad_converters.SequentialEventToAbjadVoice):
         import abjad as _abjad
 
         def convert(self, *args, **kwargs) -> abjad.Staff:
             voice = super().convert(*args, **kwargs)
-            voice._consists_commands = []
+            if not duration_line:
+                voice._consists_commands = []
             first_leaf = self._abjad.select.leaves(voice)[0]
             self._abjad.attach(
                 self._abjad.LilyPondLiteral(
