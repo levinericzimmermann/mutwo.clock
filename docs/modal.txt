@@ -41,6 +41,20 @@ Each interpolation in this structure is represented by `mutwo.clock_events.Modal
 Seperator are `mutwo.core_events.SimpleEvent` or any other event which doesn't look like a
 `mutwo.clock_events.ModalEvent` to mutwo.
 
+
+ModalEvent0 and ModalEvent1
+===========================
+
+We differentiate between two different modal movements: ModalEvent0 and ModalEvent1.
+
+    A: ModalEvent0 describes the interpolation between two pitches.
+    B: ModalEvent1 describes the static state of one pitch.
+
+So both events are simply different representations of the same reality.
+They comprehend each other, since some musical ideas are easier to describe with
+respect to ModalEvent0 and some are easier to describe with respect to ModalEvent1.
+
+
 =====================================================================
 
 

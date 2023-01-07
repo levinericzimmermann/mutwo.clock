@@ -11,8 +11,8 @@ from mutwo import music_parameters
 from mutwo import timeline_interfaces
 
 
-class SimpleModalEventToClockTree(clock_converters.ModalEventToClockTree):
-    def convert(self, _: clock_events.ModalEvent) -> clock_generators.ClockTree:
+class SimpleModalEvent0ToClockTree(clock_converters.ModalEvent0ToClockTree):
+    def convert(self, _: clock_events.ModalEvent0) -> clock_generators.ClockTree:
         clock_tree = clock_generators.ClockTree()
         clock_tree.create_layer(
             "root",
@@ -32,8 +32,8 @@ class SimpleModalEventToClockTree(clock_converters.ModalEventToClockTree):
         return clock_tree
 
 
-class SimpleModalSequentialEventToEventPlacementTuple(
-    clock_converters.ModalSequentialEventToEventPlacementTuple
+class SimpleModal0SequentialEventToEventPlacementTuple(
+    clock_converters.Modal0SequentialEventToEventPlacementTuple
 ):
     """Dummy converter which returns only one event placement"""
 
@@ -67,24 +67,13 @@ class SimpleModalSequentialEventToEventPlacementTuple(
 @pytest.fixture
 def scale():
     return music_parameters.Scale(
-        # TODO(https://github.com/mutwo-org/mutwo.music/issues/1)
-        # music_parameters.WesternPitch("c"),
-        # music_parameters.RepeatingScaleFamily(
-        #     [
-        #         music_parameters.WesternPitchInterval(interval)
-        #         for interval in "p1 m3 p4 p5 M7".split(" ")
-        #     ],
-        #     repetition_interval=music_parameters.WesternPitchInterval("p8"),
-        # ),
-        music_parameters.JustIntonationPitch("1/1"),
+        music_parameters.WesternPitch("c"),
         music_parameters.RepeatingScaleFamily(
             [
-                music_parameters.JustIntonationPitch(interval)
-                for interval in "1/1 9/8 5/4 3/2 7/4".split(" ")
+                music_parameters.WesternPitchInterval(interval)
+                for interval in "p1 m3 p4 p5 M7".split(" ")
             ],
-            repetition_interval=music_parameters.JustIntonationPitch("2/1"),
-            min_pitch_interval=music_parameters.JustIntonationPitch("1/2"),
-            max_pitch_interval=music_parameters.JustIntonationPitch("4/1"),
+            repetition_interval=music_parameters.WesternPitchInterval("p8"),
         ),
     )
 
@@ -94,7 +83,7 @@ def modal_sequential_event(scale: music_parameters.Scale, request):
     scale_position_tuple = ((0, 0), (3, 0), (4, -1), (1, 0))
     sequential_event = core_events.SequentialEvent(
         [
-            clock_events.ModalEvent(
+            clock_events.ModalEvent0(
                 scale.scale_position_to_pitch(scale_position0),
                 scale.scale_position_to_pitch(scale_position1),
                 scale,
@@ -112,10 +101,10 @@ def modal_sequential_event(scale: music_parameters.Scale, request):
 
 
 def _apply_clock_tree_on_modal_event(
-    modal_sequential_event: core_events.SequentialEvent[clock_events.ModalEvent],
+    modal_sequential_event: core_events.SequentialEvent[clock_events.ModalEvent0],
 ):
-    return clock_converters.ApplyClockTreeOnModalEvent(
-        SimpleModalEventToClockTree()
+    return clock_converters.ApplyClockTreeOnModalEvent0(
+        SimpleModalEvent0ToClockTree()
     ).convert(modal_sequential_event)
 
 
@@ -150,7 +139,7 @@ def test_modal_sequential_event_to_clock_event(
         clock_events.ModalEvent
     ],
 ):
-    clock_event = clock_converters.ModalSequentialEventToClockEvent().convert(
+    clock_event = clock_converters.Modal0SequentialEventToClockEvent().convert(
         modal_sequential_event_with_clock_tree
     )
     assert clock_event
@@ -163,7 +152,7 @@ def test_modal_sequential_event_to_event_placement_tuple(
         clock_events.ModalEvent
     ],
 ):
-    event_placement_tuple = SimpleModalSequentialEventToEventPlacementTuple().convert(
+    event_placement_tuple = SimpleModal0SequentialEventToEventPlacementTuple().convert(
         modal_sequential_event_with_clock_tree
     )
 
@@ -174,11 +163,11 @@ def test_modal_sequential_event_to_event_placement_tuple(
 
 def test_modal_sequential_event_to_clock_line(
     modal_sequential_event_with_clock_tree: core_events.SequentialEvent[
-        clock_events.ModalEvent
+        clock_events.ModalEvent0
     ],
 ):
-    clock_line = clock_converters.ModalSequentialEventToClockLine(
-        (SimpleModalSequentialEventToEventPlacementTuple(),)
+    clock_line = clock_converters.Modal0SequentialEventToClockLine(
+        (SimpleModal0SequentialEventToEventPlacementTuple(),)
     ).convert(modal_sequential_event_with_clock_tree)
 
     assert clock_line
@@ -193,3 +182,13 @@ def test_modal_sequential_event_to_clock_line(
     violin_event_placement = clock_line.get_event_placement("violin", 0)
     assert violin_event_placement
     assert violin_event_placement.event[0].tag == "violin"
+
+
+def test_Modal0SequentialEventToModal1SequentialEventTest(
+    # Schwierig das so zu testen, weil es ein event mit pausen gibt und
+    # eins ohne pausen..
+    modal_sequential_event_with_clock_tree: core_events.SequentialEvent[
+        clock_events.ModalEvent0
+    ],
+):
+    pass
