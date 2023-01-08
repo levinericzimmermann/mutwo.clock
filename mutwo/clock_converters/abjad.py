@@ -347,9 +347,10 @@ class ClockToAbjadScore(core_converters.abc.Converter):
 
 class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
     def get_abjad_layout_block(
-        self, moment: int = 4, remove_empty_staves: bool = False
+            self, moment: int = 4, remove_empty_staves: bool = False, consist_timing_translator: bool  =True
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
+        timing_translator = r'\consists "Timing_translator"' if consist_timing_translator else ""
         abjad_layout_block.items.append(
             r"""
 ragged-right = ##t
@@ -358,8 +359,8 @@ ragged-last = ##t"""
         if remove_empty_staves:
             abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
         abjad_layout_block.items.append(
-            r"""
-\context {
+            rf"""
+\context {{
   \Score
   % DEACTIVATED: Remove all-rest staves also in the first system
   % \override VerticalAxisGroup.remove-first = ##t
@@ -378,17 +379,17 @@ ragged-last = ##t"""
   % !stable release I should remove the 'barAlways' and use
   % !forbidBreakBetweenBarLines !
   barAlways = ##t
-}
-\context {
+}}
+\context {{
   \Staff
-  \consists "Timing_translator"
+  {timing_translator}
   \consists "Default_bar_line_engraver"
-}
-\context {
+}}
+\context {{
   \Voice
   % Allow line breaks with tied notes
   \remove Forbid_line_break_engraver
-}
+}}
 """
         )
         abjad_layout_block.items.append(
@@ -412,12 +413,13 @@ ragged-last = ##t"""
         self,
         abjad_score_to_convert: abjad.Score,
         remove_empty_staves: bool = False,
+        consist_timing_translator: bool = True,
         moment: int = 4,
     ) -> abjad.Block:
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
         abjad_layout_block = self.get_abjad_layout_block(
-            moment, remove_empty_staves=remove_empty_staves
+            moment, remove_empty_staves=remove_empty_staves, consist_timing_translator=consist_timing_translator,
         )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block
