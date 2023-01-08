@@ -34,7 +34,7 @@ setuptools.setup(
         "mutwo.core>=1.2.0, <2.0.0",
         "mutwo.music>=0.20.0, <1.0.0",
         "mutwo.timeline>=0.3.0, <0.4.0",
-        "mutwo.abjad>=0.13.0, <1.0.0",
+        "mutwo.abjad>=0.15.0, <1.0.0",
         "numpy>=1.18, <2.00",
     ],
     extras_require=extras_require,
