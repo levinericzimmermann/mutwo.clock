@@ -27,14 +27,6 @@ def make_complex_event_to_abjad_container(
             voice = super().convert(*args, **kwargs)
             if not duration_line:
                 voice._consists_commands = []
-            first_leaf = self._abjad.select.leaves(voice)[0]
-            self._abjad.attach(
-                self._abjad.LilyPondLiteral(
-                    r"\omit Stem \omit Flag "
-                    r"\omit Beam \override NoteHead.duration-log = 2"
-                ),
-                first_leaf,
-            )
             return self._abjad.Staff([voice])
 
     if sequential_event_to_abjad_staff_class is None:
