@@ -48,6 +48,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             abjad_converters.ComplexEventToAbjadContainer
         ] = None,
         staff_count: int = 1,
+        staff_lilypond_type: str = "Staff",
     ):
 
         if complex_event_to_abjad_container is None:
@@ -56,6 +57,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             )
         self._complex_event_to_abjad_container = complex_event_to_abjad_container
         self._staff_count = staff_count
+        self._staff_lilypond_type = staff_lilypond_type
 
     def _convert_rest(
         self,
@@ -79,7 +81,9 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                 skip,
             )
             staff = abjad.Staff(
-                [skip], name=self._get_abjad_staff_name(tag, abjad_staff_index)
+                [skip],
+                name=self._get_abjad_staff_name(tag, abjad_staff_index),
+                lilypond_type=self._staff_lilypond_type,
             )
             staff_group.append(staff)
         return staff_group
@@ -98,6 +102,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         tag = event_to_convert.tag
         for abjad_staff_index, abjad_staff in enumerate(abjad_staff_group):
             abjad_staff.name = self._get_abjad_staff_name(tag, abjad_staff_index)
+            abjad_staff.lilypond_type = self._staff_lilypond_type
             for abjad_voice_index, abjad_voice in enumerate(abjad_staff):
                 abjad_voice.name = f"{abjad_staff.name}-{abjad_voice_index}"
                 leaf_selection = abjad.select.leaves(abjad_voice)
@@ -203,6 +208,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 r"\once \undo \omit Staff.BarLine "
                 r"\once \undo \omit Score.BarLine "
                 rf"\magnifyStaff #(magstep {magnification_size})"
+                r"\set Score.connectArpeggios = ##t"
             )
             if is_repeating:
                 first_leaf_before = rf'{first_leaf_before} \bar ".|:"'
@@ -347,10 +353,15 @@ class ClockToAbjadScore(core_converters.abc.Converter):
 
 class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
     def get_abjad_layout_block(
-            self, moment: int = 4, remove_empty_staves: bool = False, consist_timing_translator: bool  =True
+        self,
+        moment: int = 4,
+        remove_empty_staves: bool = False,
+        consist_timing_translator: bool = True,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
-        timing_translator = r'\consists "Timing_translator"' if consist_timing_translator else ""
+        timing_translator = (
+            r'\consists "Timing_translator"' if consist_timing_translator else ""
+        )
         abjad_layout_block.items.append(
             r"""
 ragged-right = ##t
@@ -379,6 +390,8 @@ ragged-last = ##t"""
   % !stable release I should remove the 'barAlways' and use
   % !forbidBreakBetweenBarLines !
   barAlways = ##t
+  % Arpeggi across staves
+  \consists "Span_arpeggio_engraver"
 }}
 \context {{
   \Staff
@@ -419,7 +432,9 @@ ragged-last = ##t"""
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
         abjad_layout_block = self.get_abjad_layout_block(
-            moment, remove_empty_staves=remove_empty_staves, consist_timing_translator=consist_timing_translator,
+            moment,
+            remove_empty_staves=remove_empty_staves,
+            consist_timing_translator=consist_timing_translator,
         )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block
