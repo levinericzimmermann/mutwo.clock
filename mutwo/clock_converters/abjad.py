@@ -415,7 +415,10 @@ ragged-last = ##t"""
   \Score
   proportionalNotationDuration = #(ly:make-moment 1/{moment})
   \override SpacingSpanner.uniform-stretching = ##t
-  \override SpacingSpanner.strict-grace-spacing = ##t
+  % Deactivate: leads to unequal results (maybe only useful in
+  % combination with 'strict-note-spacing'? But activating this
+  % completely breaks clock scores..)
+  % \override SpacingSpanner.strict-grace-spacing = ##t
   \override Beam.breakable = ##t
   \override Glissando.breakable = ##t
   \override TextSpanner.breakable = ##t
