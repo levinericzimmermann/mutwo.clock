@@ -400,6 +400,7 @@ ragged-last = ##t"""
   \Staff
   {consist_timing_translator}
   \consists "Default_bar_line_engraver"
+  \remove "Separating_line_group_engraver"
 }}
 \context {{
   \Voice
