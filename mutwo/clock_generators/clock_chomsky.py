@@ -146,7 +146,12 @@ class N(treelib.Node):
 
     def render(self):
         clock_event = clock_events.ClockEvent()
-        [clock_event.concatenate_by_tag(t.render()) for t in self.data]
+        for t in self.data:
+            ev = t.render()
+            try:
+                clock_event.concatenate_by_tag(ev)
+            except core_utilities.NoTagError:
+                clock_event.concatenate_by_index(ev)
         return clock_event
 
 
