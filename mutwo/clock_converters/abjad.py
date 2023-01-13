@@ -419,10 +419,11 @@ ragged-last = ##t"""
   % Deactivate: leads to unequal results (maybe only useful in
   % combination with 'strict-note-spacing'? But activating this
   % completely breaks clock scores..)
-  % \override SpacingSpanner.strict-grace-spacing = ##t
+  \override SpacingSpanner.strict-grace-spacing = ##t
   \override Beam.breakable = ##t
   \override Glissando.breakable = ##t
   \override TextSpanner.breakable = ##t
+  \override PaperColumn.used = ##t
 }}
 """
         )
