@@ -359,8 +359,11 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         consist_timing_translator: bool = True,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
-        timing_translator = (
+        consist_timing_translator = (
             r'\consists "Timing_translator"' if consist_timing_translator else ""
+        )
+        remove_timing_translator = (
+            r'\remove "Timing_translator"' if consist_timing_translator else ""
         )
         abjad_layout_block.items.append(
             r"""
@@ -379,7 +382,7 @@ ragged-last = ##t"""
   \override SystemStartBar.collapse-height = #1
   % Avoid bar lines from time signatures of other staff groups
   % (move them to Staff context).
-  \remove "Timing_translator"
+  {remove_timing_translator}
   \remove "Default_bar_line_engraver"
   % Allow breaks between bar lines
   % (this is important because we have)
@@ -395,7 +398,7 @@ ragged-last = ##t"""
 }}
 \context {{
   \Staff
-  {timing_translator}
+  {consist_timing_translator}
   \consists "Default_bar_line_engraver"
 }}
 \context {{
