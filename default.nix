@@ -3,10 +3,10 @@ with pkgs.python310Packages;
 
 let
 
-  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/66534ff86647fd22ee2b23379a04cf0400617a0d.tar.gz";
+  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/5b0e331e4dbaee02848ff5940c6f7fa35fe8da30.tar.gz";
   mutwo-timeline = import (mutwo-timeline-archive + "/default.nix");
 
-  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/2314faaa2babf0e1b98f46a30dc9886609e6f3be.tar.gz";
+  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/9355d09c300b8a32575b82f4f250d4e158167118.tar.gz";
   mutwo-abjad = import (mutwo-abjad-archive + "/default.nix");
 
   treelib = pkgs.python310Packages.buildPythonPackage rec {
@@ -28,8 +28,8 @@ in
     src = fetchFromGitHub {
       owner = "levinericzimmermann";
       repo = name;
-      rev = "d41f755fb61fa230be2bcdd3364ff0762cb4e7c1";
-      sha256 = "sha256-CvKoY9vB9XQG/Mmsw0wnuPGLf+A0s9iLUbw9QzyyYNw=";
+      rev = "5f90ef0224a4e04ad792c121f7b76abc7c3363db";
+      sha256 = "sha256-7pZEO0BGImx89s+ASNu4p8pxB8t1U4jYE5wwBkSoJXc=";
     };
     checkInputs = [
       python310Packages.pytest
