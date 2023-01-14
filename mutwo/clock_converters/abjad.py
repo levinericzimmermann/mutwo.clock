@@ -96,6 +96,18 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         scale_durations: str,
         event_to_convert: core_events.TaggedSimultaneousEvent,
     ):
+        # We need to attach time signatures here. We don't need them
+        # for the notation itself, but for the quantizer. If we don't
+        # specify them here, the quantizer assumes that we have a time
+        # signature of 4/4. And if our events doesn't take 4/4 the
+        # quantizer adds a rest at the end of our event, which completely
+        # breaks the notation synchronization.
+        durationf = event_to_convert.duration.duration
+        time_signature = abjad.TimeSignature(
+            (durationf.numerator, durationf.denominator)
+        )
+        for sequential_event in event_to_convert:
+            sequential_event.time_signature_tuple = (time_signature,)
         abjad_staff_group = self._complex_event_to_abjad_container.convert(
             event_to_convert
         )
