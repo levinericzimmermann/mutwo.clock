@@ -18,6 +18,7 @@ import ranges
 import treelib
 
 from mutwo import clock_events
+from mutwo import core_events
 from mutwo import core_parameters
 from mutwo import core_utilities
 from mutwo import common_generators
@@ -156,8 +157,11 @@ class N(treelib.Node):
 
 
 class Tree(treelib.Tree):
-    def __init__(self, *args, random_seed: int = 100, **kwargs):
+    def __init__(
+        self, *args, random_seed: int = 100, candidate_count: int = 5, **kwargs
+    ):
         self._random_seed = random_seed
+        self._candidate_count = candidate_count
         super().__init__(*args, **kwargs)
 
     @functools.cached_property
@@ -178,17 +182,23 @@ class Tree(treelib.Tree):
         )
 
     def symt_to_n(self, symt: SymT) -> N:
-        valid_node_list = []
         if dur_range := symt.duration_range:
+            valid_node_list = []
             for n in self.real_node_tuple:
-                if isinstance(dur_range.difference(n.duration_range), ranges.RangeSet):
-                    valid_node_list.append(n)
-            if not valid_node_list:
-                warnings.warn(
-                    "Couldn't find any node which fits into symbolic node: "
-                    f"'{symt}'. Taking a random node now."
+                diff_start, diff_end = (
+                    abs(
+                        core_events.configurations.UNKNOWN_OBJECT_TO_DURATION(
+                            getattr(dur_range, p) - getattr(n.duration_range, p)
+                        ).duration
+                    )
+                    if getattr(n.duration_range, p) not in dur_range
+                    else 0
+                    for p in "start end".split(" ")
                 )
-        if not valid_node_list:
+                valid_node_list.append((diff_start + diff_end, n))
+            min_fitness = min(valid_node_list, key=operator.itemgetter(0))[0]
+            valid_node_list = [n for f, n in valid_node_list if f == min_fitness]
+        else:
             valid_node_list = self.real_node_tuple
 
         weight_list = [n.weight for n in valid_node_list]
