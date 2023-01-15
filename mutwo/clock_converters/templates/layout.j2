@@ -38,6 +38,8 @@ ragged-last = ##t
   {% if move_timing_translator %}
   \remove "Timing_translator"
   {% endif %}
+  \override BarNumber.break-visibility = #all-invisible
+  connectArpeggios = ##t
 }
 
 \context {
@@ -48,6 +50,7 @@ ragged-last = ##t
 \context {
   \Staff
   \omit BarLine
+  \omit TimeSignature
   {% if move_timing_translator %}
   \consists "Timing_translator"
   {% endif %}
@@ -56,6 +59,9 @@ ragged-last = ##t
   {% if remove_empty_staves %}
   \RemoveEmptyStaves
   {% endif %}
+  \override BarLine.allow-span-bar = ##f
+  \override Clef.break-visibility = #all-invisible
+  \override ClefModifier.break-visibility = #all-invisible
 }
 
 \context {

@@ -77,12 +77,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
-                    r"\override Score.BarNumber.break-visibility = "
-                    "#all-invisible"
-                    "\n"
                     r"\omit Staff.Clef "
-                    "\n"
-                    r"\omit Staff.TimeSignature"
                     "\n"
                     r"\stopStaff "
                     "\n"
@@ -135,12 +130,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                         "\n".join(
                             (
                                 r"\startStaff",
-                                r"\override Score.BarNumber.break-visibility = #all-invisible",
                                 r"\once \undo \omit Staff.Clef",
-                                r"\override Staff.BarLine.allow-span-bar = ##f",
-                                r"\override Staff.Clef.break-visibility = #all-invisible",
-                                r"\override Staff.ClefModifier.break-visibility = #all-invisible",
-                                r"\omit Staff.TimeSignature",
                                 r"\set Staff.forceClef = ##t",
                             )
                         ),
@@ -227,9 +217,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
             first_leaf_before = "\n".join(
                 (
                     show_barline(),
-                    r"\omit Staff.TimeSignature",
                     rf"\magnifyStaff #(magstep {magnification_size})",
-                    r"\set Score.connectArpeggios = ##t",
                 )
             )
             if is_repeating:
