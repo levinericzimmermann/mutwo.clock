@@ -233,7 +233,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 )
             )
             if is_repeating:
-                first_leaf_before = rf'{first_leaf_before} \bar ".|:"'
+                first_leaf_before = f'{first_leaf_before}\n\\bar ".|:"'
 
             abjad.attach(
                 abjad.LilyPondLiteral(
@@ -500,11 +500,7 @@ def str2block(content: str) -> str:
 
 
 def show_barline() -> str:
-    return (
-        r"\once \undo \omit Staff.BarLine "
-        "\n"
-        r"\once \undo \omit StaffGroup.BarLine "
-        "\n"
-        r"\once \undo \omit Score.BarLine "
-        "\n"
-    )
+    def undo(context):
+        return rf"\once \undo \omit {context}.BarLine "
+
+    return "\n".join([undo(c) for c in "Staff StaffGroup Score".split(" ")])
