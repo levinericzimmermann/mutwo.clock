@@ -45,6 +45,16 @@ ragged-last = ##t
 \context {
   \StaffGroup
   \omit BarLine
+
+  \override StaffGrouper.staff-staff-spacing.basic-distance = #1
+  \override StaffGrouper.staff-staff-spacing.minimum-distance = #1
+  \override StaffGrouper.staff-staff-spacing.padding = #1
+  \override StaffGrouper.staff-staff-spacing.stretchability = #0
+
+  \override StaffGrouper.staffgroup-staff-spacing.basic-distance = #6
+  \override StaffGrouper.staffgroup-staff-spacing.minimum-distance = #5
+  \override StaffGrouper.staffgroup-staff-spacing.padding = #1
+  \override StaffGrouper.staffgroup-staff-spacing.stretchability = #1
 }
 
 \context {
