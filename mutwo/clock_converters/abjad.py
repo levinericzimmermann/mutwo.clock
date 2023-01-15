@@ -3,11 +3,13 @@
 See abjad_notes.txt for more information regarding internal structure.
 """
 
+import os
 import typing
 import warnings
 
 import abjad
 import quicktions as fractions
+import jinja2
 
 from mutwo import abjad_converters
 from mutwo import clock_converters
@@ -34,6 +36,11 @@ TagToAbjadStaffGroup: typing.TypeAlias = "dict[Tag, abjad.StaffGroup]"
 # TODO(Explicitly add repetition bar lines)
 # TODO(Add indicators for start and end ranges!)
 # TODO(Add instrument names before each appearing event placement.)
+
+TEMPLATE_PATH = "{}/{}".format(
+    "/".join(os.path.abspath(__file__).split("/")[:-1]), "/templates"
+)
+J2ENVIRONMENT = jinja2.Environment(loader=jinja2.FileSystemLoader(TEMPLATE_PATH))
 
 
 class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
@@ -371,75 +378,15 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         consist_timing_translator: bool = True,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
-        consist_timing_translator = (
-            r'\consists "Timing_translator"' if consist_timing_translator else ""
-        )
-        remove_timing_translator = (
-            r'\remove "Timing_translator"' if consist_timing_translator else ""
-        )
         abjad_layout_block.items.append(
-            r"""
-ragged-right = ##t
-ragged-last = ##t"""
+            str2block(
+                J2ENVIRONMENT.get_template("layout.j2").render(
+                    moment=moment,
+                    remove_empty_staves=remove_empty_staves,
+                    move_timing_translator=not consist_timing_translator,
+                )
+            )
         )
-        if remove_empty_staves:
-            abjad_layout_block.items.append(r"\context { \Staff \RemoveEmptyStaves }")
-        abjad_layout_block.items.append(
-            rf"""
-\context {{
-  \Score
-  % DEACTIVATED: Remove all-rest staves also in the first system
-  % \override VerticalAxisGroup.remove-first = ##t
-  % If only one non-empty staff in a system exists, still print the starting bar
-  \override SystemStartBar.collapse-height = #1
-  % Avoid bar lines from time signatures of other staff groups
-  % (move them to Staff context).
-  {remove_timing_translator}
-  \remove "Default_bar_line_engraver"
-  % Allow breaks between bar lines
-  % (this is important because we have)
-  % (only very few bar lines).
-  % !forbidBreakBetweenBarLines = ##f
-  % !forbidBreakBetweenBarLines doesn't exist yet in 2.22,
-  % !it's only available from 2.23. Once migrated to next
-  % !stable release I should remove the 'barAlways' and use
-  % !forbidBreakBetweenBarLines !
-  barAlways = ##t
-  % Arpeggi across staves
-  \consists "Span_arpeggio_engraver"
-}}
-\context {{
-  \Staff
-  {consist_timing_translator}
-  \consists "Default_bar_line_engraver"
-  \remove "Separating_line_group_engraver"
-}}
-\context {{
-  \Voice
-  % Allow line breaks with tied notes
-  \remove Forbid_line_break_engraver
-}}
-"""
-        )
-        abjad_layout_block.items.append(
-            rf"""
-% PROPORTIONAL NOTATION!!
-\context {{
-  \Score
-  proportionalNotationDuration = #(ly:make-moment 1/{moment})
-  \override SpacingSpanner.uniform-stretching = ##t
-  % Deactivate: leads to unequal results (maybe only useful in
-  % combination with 'strict-note-spacing'? But activating this
-  % completely breaks clock scores..)
-  \override SpacingSpanner.strict-grace-spacing = ##t
-  \override Beam.breakable = ##t
-  \override Glissando.breakable = ##t
-  \override TextSpanner.breakable = ##t
-  \override PaperColumn.used = ##t
-}}
-"""
-        )
-        abjad_layout_block.items.append("indent = 0")
         return abjad_layout_block
 
     def convert(
@@ -502,42 +449,20 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
 
     def get_paper_block(self) -> abjad.Block:
         paper_block = abjad.Block("paper")
-        # paper_block.items.append(r"system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }")
         paper_block.items.append(
-            rf"""
-system-system-spacing = #'(
-    (basic-distance . {self._system_system_basic_distance})
-    (padding . {self._system_system_padding})
-)
-score-system-spacing = #'(
-    (basic-distance . {self._score_system_basic_distance})
-    (padding . {self._score_system_basic_distance})
-)
-markup-system-spacing = #'(
-    (basic-distance . {self._markup_system_basic_distance})
-    (padding . {self._markup_system_basic_distance})
-)
-"""
+            str2block(
+                J2ENVIRONMENT.get_template("paper.j2").render(
+                    system_system_padding=self._system_system_padding,
+                    system_system_basic_distance=self._system_system_basic_distance,
+                    score_system_basic_distance=self._score_system_basic_distance,
+                    score_system_padding=self._score_system_padding,
+                    markup_system_padding=self._markup_system_padding,
+                    markup_system_basic_distance=self._markup_system_basic_distance,
+                    font="Liberation Mono",
+                    staff_height=self._staff_height,
+                )
+            )
         )
-        font = "Liberation Mono"
-        paper_block.items.append(
-            rf"""
-    #(define fonts
-        (make-pango-font-tree "{font}" "{font}" "{font}"
-        (/ staff-height pt {self._staff_height}))
-      )
-        """
-        )
-        paper_block.items.append(
-            r"""
-#(define fonts
-    (set-global-fonts
-     #:music "beethoven"
-     #:brace "beethoven"
-    )
-)"""
-        )
-        paper_block.items.append(r"print-first-page-number = ##t")
         return paper_block
 
     def convert(
@@ -569,3 +494,7 @@ markup-system-spacing = #'(
                 lilypond_file.items.append("\n")
 
         return lilypond_file
+
+
+def str2block(content: str) -> str:
+    return "\n".join(f"\t{s}" for s in content.strip().splitlines())

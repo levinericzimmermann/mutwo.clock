@@ -36,7 +36,9 @@ setuptools.setup(
         "mutwo.timeline>=0.3.0, <0.4.0",
         "mutwo.abjad>=0.15.0, <1.0.0",
         "numpy>=1.18, <2.00",
+        "jinja2>=3.1.2, <4.0.0",
     ],
+    include_package_data=True,
     extras_require=extras_require,
     python_requires=">=3.10, <4",
 )

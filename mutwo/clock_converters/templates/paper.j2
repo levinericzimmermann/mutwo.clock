@@ -1,0 +1,30 @@
+
+print-first-page-number = ##t
+
+% Deactivated
+% system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }
+
+system-system-spacing = #'(
+    (basic-distance . {{ system_system_basic_distance }})
+    (padding . {{ system_system_padding }})
+)
+score-system-spacing = #'(
+    (basic-distance . {{ score_system_basic_distance }})
+    (padding . {{ score_system_basic_distance }})
+)
+markup-system-spacing = #'(
+    (basic-distance . {{ markup_system_basic_distance }})
+    (padding . {{ markup_system_basic_distance }})
+)
+
+#(define fonts
+    (make-pango-font-tree "{{ font }}" "{{ font }}" "{{ font }}"
+    (/ staff-height pt {{ staff_height }}))
+)
+
+#(define fonts
+  (set-global-fonts
+    #:music "beethoven"
+    #:brace "beethoven"
+  )
+)

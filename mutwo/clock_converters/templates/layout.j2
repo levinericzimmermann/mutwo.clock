@@ -1,0 +1,58 @@
+
+indent = 0
+ragged-right = ##t
+ragged-last = ##t
+
+\context {
+  \Score
+  % DEACTIVATED: Remove all-rest staves also in the first system
+  % \override VerticalAxisGroup.remove-first = ##t
+  % If only one non-empty staff in a system exists, still print the starting bar
+  \override SystemStartBar.collapse-height = #1
+  % Avoid bar lines from time signatures of other staff groups
+  % (move them to Staff context).
+  \remove "Default_bar_line_engraver"
+  % Allow breaks between bar lines
+  % (this is important because we have)
+  % (only very few bar lines).
+  % !forbidBreakBetweenBarLines = ##f
+  % !forbidBreakBetweenBarLines doesn't exist yet in 2.22,
+  % !it's only available from 2.23. Once migrated to next
+  % !stable release I should remove the 'barAlways' and use
+  % !forbidBreakBetweenBarLines !
+  barAlways = ##t
+  % Arpeggi across staves
+  \consists "Span_arpeggio_engraver"
+  % PROPORTIONAL NOTATION!!
+  proportionalNotationDuration = #(ly:make-moment 1/{{ moment }})
+  \override SpacingSpanner.uniform-stretching = ##t
+  % Deactivate: leads to unequal results (maybe only useful in
+  % combination with 'strict-note-spacing'? But activating this
+  % completely breaks clock scores..)
+  \override SpacingSpanner.strict-grace-spacing = ##t
+  \override Beam.breakable = ##t
+  \override Glissando.breakable = ##t
+  \override TextSpanner.breakable = ##t
+  \override PaperColumn.used = ##t
+  {%- if move_timing_translator -%}
+  \remove "Timing_translator"
+  {%- endif -%}
+}
+
+\context {
+  \Staff
+  {%- if move_timing_translator -%}
+  \consists "Timing_translator"
+  {%- endif -%}
+  \consists "Default_bar_line_engraver"
+  \remove "Separating_line_group_engraver"
+  {%- if remove_empty_staves -%}
+  \RemoveEmptyStaves
+  {%- endif -%}
+}
+
+\context {
+  \Voice
+  % Allow line breaks with tied notes
+  \remove Forbid_line_break_engraver
+}
