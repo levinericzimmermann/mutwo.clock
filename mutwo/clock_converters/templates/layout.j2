@@ -5,6 +5,7 @@ ragged-last = ##t
 
 \context {
   \Score
+  \omit BarLine
   % DEACTIVATED: Remove all-rest staves also in the first system
   % \override VerticalAxisGroup.remove-first = ##t
   % If only one non-empty staff in a system exists, still print the starting bar
@@ -34,21 +35,27 @@ ragged-last = ##t
   \override Glissando.breakable = ##t
   \override TextSpanner.breakable = ##t
   \override PaperColumn.used = ##t
-  {%- if move_timing_translator -%}
+  {% if move_timing_translator %}
   \remove "Timing_translator"
-  {%- endif -%}
+  {% endif %}
+}
+
+\context {
+  \StaffGroup
+  \omit BarLine
 }
 
 \context {
   \Staff
-  {%- if move_timing_translator -%}
+  \omit BarLine
+  {% if move_timing_translator %}
   \consists "Timing_translator"
-  {%- endif -%}
+  {% endif %}
   \consists "Default_bar_line_engraver"
   \remove "Separating_line_group_engraver"
-  {%- if remove_empty_staves -%}
+  {% if remove_empty_staves %}
   \RemoveEmptyStaves
-  {%- endif -%}
+  {% endif %}
 }
 
 \context {

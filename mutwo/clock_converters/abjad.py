@@ -77,11 +77,15 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
-                    r"\override Score.BarNumber.break-visibility = #all-invisible"
+                    r"\override Score.BarNumber.break-visibility = "
+                    "#all-invisible"
                     "\n"
-                    r"\omit Staff.BarLine \omit StaffGroup.BarLine "
                     r"\omit Staff.Clef "
-                    r"\omit Staff.TimeSignature \stopStaff "
+                    "\n"
+                    r"\omit Staff.TimeSignature"
+                    "\n"
+                    r"\stopStaff "
+                    "\n"
                     f"{scale_durations}",
                     site="before",
                 ),
@@ -133,7 +137,6 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                                 r"\startStaff",
                                 r"\override Score.BarNumber.break-visibility = #all-invisible",
                                 r"\once \undo \omit Staff.Clef",
-                                r"\omit Staff.BarLine",
                                 r"\override Staff.BarLine.allow-span-bar = ##f",
                                 r"\override Staff.Clef.break-visibility = #all-invisible",
                                 r"\override Staff.ClefModifier.break-visibility = #all-invisible",
@@ -221,13 +224,13 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
             abjad_staff.name = f"{abjad_staff_group_name}-staff-{staff_index}"
             leaf_selection = abjad.select.leaves(abjad_staff_group)
             first_leaf, last_leaf = leaf_selection[0], leaf_selection[-1]
-            first_leaf_before = (
-                r"\omit Staff.BarLine \omit Score.BarLine "
-                r"\omit Staff.TimeSignature "
-                r"\once \undo \omit Staff.BarLine "
-                r"\once \undo \omit Score.BarLine "
-                rf"\magnifyStaff #(magstep {magnification_size})"
-                r"\set Score.connectArpeggios = ##t"
+            first_leaf_before = "\n".join(
+                (
+                    show_barline(),
+                    r"\omit Staff.TimeSignature",
+                    rf"\magnifyStaff #(magstep {magnification_size})",
+                    r"\set Score.connectArpeggios = ##t",
+                )
             )
             if is_repeating:
                 first_leaf_before = rf'{first_leaf_before} \bar ".|:"'
@@ -239,19 +242,15 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 ),
                 first_leaf,
             )
-            abjad.attach(
-                abjad.LilyPondLiteral(
-                    r"\omit Staff.BarLine " r"\omit Score.BarLine ",
-                    site="absolute_after",
-                ),
-                first_leaf,
-            )
             if is_repeating:
                 abjad.attach(
                     abjad.LilyPondLiteral(
-                        r"\once \undo \omit Staff.BarLine "
-                        r"\once \undo \omit Score.BarLine "
-                        r'\bar  ":|."',
+                        "\n".join(
+                            (
+                                show_barline(),
+                                r'\bar  ":|."',
+                            )
+                        ),
                         site="after",
                     ),
                     last_leaf,
@@ -498,3 +497,14 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
 
 def str2block(content: str) -> str:
     return "\n".join(f"\t{s}" for s in content.strip().splitlines())
+
+
+def show_barline() -> str:
+    return (
+        r"\once \undo \omit Staff.BarLine "
+        "\n"
+        r"\once \undo \omit StaffGroup.BarLine "
+        "\n"
+        r"\once \undo \omit Score.BarLine "
+        "\n"
+    )
