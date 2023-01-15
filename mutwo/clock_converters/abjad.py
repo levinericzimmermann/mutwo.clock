@@ -77,11 +77,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             skip = abjad.Skip(written_duration)
             abjad.attach(
                 abjad.LilyPondLiteral(
-                    r"\omit Staff.Clef "
-                    "\n"
-                    r"\stopStaff "
-                    "\n"
-                    f"{scale_durations}",
+                    r"\omit Staff.Clef " "\n" r"\stopStaff " "\n" f"{scale_durations}",
                     site="before",
                 ),
                 skip,
@@ -221,7 +217,11 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 )
             )
             if is_repeating:
-                first_leaf_before = f'{first_leaf_before}\n\\bar ".|:"'
+                bar_line = ".|:"
+                first_leaf_before = (
+                    f"{first_leaf_before}\n{override_barline(bar_line)}\n"
+                    rf'\bar "{bar_line}"'
+                )
 
             abjad.attach(
                 abjad.LilyPondLiteral(
@@ -236,7 +236,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                         "\n".join(
                             (
                                 show_barline(),
-                                r'\bar  ":|."',
+                                override_barline(":|."),
                             )
                         ),
                         site="after",
@@ -492,3 +492,14 @@ def show_barline() -> str:
         return rf"\once \undo \omit {context}.BarLine "
 
     return "\n".join([undo(c) for c in "Staff StaffGroup Score".split(" ")])
+
+
+def override_barline(symbol) -> str:
+    # Lilyponds '\bar "symbol"' is insufficient here.
+    # I don't know why, but it doesn't work / doesn't change the
+    # bar symbol (maybe it's a bug).
+    # When explicitly overridding the glyph name, it works.
+    #
+    # It's 'glyph-name' and not (as written in ly doc) 'glyph':
+    # https://github.com/lilypond/lilypond/blob/c4a9cd742/scm/bar-line.scm#L673
+    return rf'\once \override Staff.BarLine.glyph-name = "{symbol}"'
