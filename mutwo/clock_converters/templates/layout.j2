@@ -40,6 +40,14 @@ ragged-last = ##t
   {% endif %}
   \override BarNumber.break-visibility = #all-invisible
   connectArpeggios = ##t
+  % We need clefs AFTER bar lines, not before them
+  %     https://www.mail-archive.com/lilypond-user@gnu.org/msg125397.html
+  \override BreakAlignment #'break-align-orders = #(make-vector 3 '(staff-bar clef))
+  % We don't want to see a single bar line at the end of a line.
+  % We need to set the default bar line (glyph-name), otherwise we'll
+  % catch an exception.
+  \override BarLine.glyph-name = "|"
+  \override BarLine.break-visibility = #end-of-line-invisible
 }
 
 \context {
@@ -72,6 +80,10 @@ ragged-last = ##t
   \override BarLine.allow-span-bar = ##f
   \override Clef.break-visibility = #all-invisible
   \override ClefModifier.break-visibility = #all-invisible
+  % We don't want to see cautionary clefs in the line before
+  % a new event placed.
+  % https://lists.gnu.org/archive/html/lilypond-user/2019-05/msg00124.html
+  explicitClefVisibility = #end-of-line-invisible
 }
 
 \context {

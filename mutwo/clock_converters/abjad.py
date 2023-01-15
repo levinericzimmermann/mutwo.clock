@@ -28,6 +28,8 @@ __all__ = (
     "ClockToAbjadScore",
     "AbjadScoreToAbjadScoreBlock",
     "AbjadScoreBlockTupleToLilyPondFile",
+    "show_barline",
+    "override_barline",
 )
 
 Tag: typing.TypeAlias = "str"
@@ -128,6 +130,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                                 r"\startStaff",
                                 r"\once \undo \omit Staff.Clef",
                                 r"\set Staff.forceClef = ##t",
+                                show_barline(),
                             )
                         ),
                         site="absolute_before",
@@ -135,8 +138,8 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                     first_leaf,
                 )
                 for leaf in leaf_selection:
-                    before_literal = f"{scale_durations} {{"
                     abjad.detach(abjad.TimeSignature, leaf)
+                    before_literal = f"{scale_durations} {{"
                     abjad.attach(
                         abjad.LilyPondLiteral(
                             before_literal,
@@ -145,6 +148,10 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                         leaf,
                     )
                     abjad.attach(abjad.LilyPondLiteral("}", site="after"), leaf)
+                last_leaf = leaf
+                abjad.attach(
+                    abjad.LilyPondLiteral(show_barline(), site="after"), last_leaf
+                )
         return abjad_staff_group
 
     def convert(
