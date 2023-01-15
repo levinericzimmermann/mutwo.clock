@@ -1,4 +1,5 @@
 import abjad
+import ranges
 
 from mutwo import abjad_converters
 from mutwo import core_events
@@ -19,6 +20,43 @@ def make_complex_event_to_abjad_container(
     This function provides various parameters to adjust converter
     definition without rewriting everything.
     """
+
+    from mutwo import clock_converters
+
+    class AddRepetition(abjad_converters.ProcessAbjadContainerRoutine):
+        def __call__(
+            self,
+            complex_event_to_convert: core_events.abc.ComplexEvent,
+            container_to_process: abjad.Container,
+        ):
+            # why don't we get the outer simultaneous event, but an inner one?
+            repetition_count_range = getattr(
+                complex_event_to_convert, "repetition_count_range", ranges.Range(1, 2)
+            )
+            if repetition_count_range.end > 2:
+                leaves = abjad.select.leaves(container_to_process)
+                first_leaf = leaves[0]
+                last_leaf = leaves[-1]
+                abjad.attach(
+                    abjad.LilyPondLiteral(
+                        "{}{}".format(
+                            clock_converters.show_barline(),
+                            clock_converters.override_barline(".|:"),
+                        ),
+                        site="before",
+                    ),
+                    first_leaf,
+                )
+                abjad.attach(
+                    abjad.LilyPondLiteral(
+                        "{}{}".format(
+                            clock_converters.show_barline(),
+                            clock_converters.override_barline(":|."),
+                        ),
+                        site="after",
+                    ),
+                    last_leaf,
+                )
 
     class _SequentialEventToAbjadStaff(abjad_converters.SequentialEventToAbjadVoice):
         import abjad as _abjad
@@ -42,6 +80,9 @@ def make_complex_event_to_abjad_container(
     )
     nested_complex_event_to_abjad_container_kwargs.setdefault(
         "lilypond_type_of_abjad_container", "StaffGroup"
+    )
+    nested_complex_event_to_abjad_container_kwargs.setdefault(
+        "post_process_abjad_container_routine_sequence", [AddRepetition()]
     )
 
     # Default case: we don't print any tempo
