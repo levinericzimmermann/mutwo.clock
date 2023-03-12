@@ -150,7 +150,12 @@ class Modal0SequentialEventToClockLine(core_converters.abc.Converter):
         modal_0_sequential_event_to_convert: Modal0SequentialEvent,
     ) -> clock_interfaces.ClockLine:
         m0seq = modal_0_sequential_event_to_convert
-        m1seq = self._m0seq_to_m1seq(m0seq)
+
+        # Only make expensive split in case we do have modal1 maker!
+        if self._maker_tuple_1:
+            m1seq = self._m0seq_to_m1seq(m0seq)
+        else:
+            m1seq = []
 
         event_placement_list = []
         for modal_sequential_event, event_placement_maker_tuple in (
@@ -274,15 +279,15 @@ class Modal0SequentialEventToModal1SequentialEvent(core_converters.abc.Converter
             (control_event_part_list, control_event_list),
         ):
             list_.append(part_list[0])  # Special case: only start_pitch
-            for p0, p1 in zip(part_list[1:], part_list[2:-1]):
+            for p0, p1 in zip(part_list[1::2], part_list[2:-1:2]):
                 if p0 is None and p1 is None:
                     list_.append((None, None))
                 elif p0 is None:
-                    list_.append((None, p1.copy()))
+                    list_.append((None, p1))
                 elif p1 is None:
-                    list_.append((p0.copy(), None))
+                    list_.append((p0, None))
                 else:
-                    list_.append((p0 + p1).copy())
+                    list_.append(p0.concatenate_by_index(p1))
             list_.append(part_list[-1])  # Special case: only end_pitch
 
         return clock_event_list, control_event_list
