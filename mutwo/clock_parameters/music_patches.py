@@ -32,7 +32,7 @@ if 1:
             self.scale_degree_tuple,
             self.period_repetition_count_tuple,
         ):
-            if content[0] in other.pitch_tuple:  # content[0] == pitch
+            if pitch in other.pitch_tuple:
                 for item, list_ in zip(content, data):
                     list_.append(item)
         return music_parameters.Scale(self.tonic, music_parameters.ScaleFamily(*data))
