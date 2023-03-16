@@ -269,7 +269,7 @@ class ClockToAbjadScore(core_converters.abc.Converter):
         #   (b) tag_tuple, on the other hand, is provided to specify which
         #       voices are mandatory in the returned score (aka partbook).
         tag_to_abjad_staff_group_converter: dict[Tag, EventPlacementToAbjadStaffGroup],
-        clock_event_to_abjad_staff_group: ClockEventToAbjadStaffGroup = ClockEventToAbjadStaffGroup(),
+        clock_event_to_abjad_staff_group: typing.Optional[ClockEventToAbjadStaffGroup] = ClockEventToAbjadStaffGroup(),
         timeline_to_event_placement_tuple: timeline_converters.TimeLineToEventPlacementTuple = timeline_converters.TimeLineToEventPlacementTuple(),
         event_placement_tuple_to_split_event_placement_dict: timeline_converters.EventPlacementTupleToSplitEventPlacementDict = timeline_converters.EventPlacementTupleToSplitEventPlacementDict(),
         event_placement_tuple_to_gapless_event_placement_tuple: timeline_converters.EventPlacementTupleToGaplessEventPlacementTuple = timeline_converters.EventPlacementTupleToGaplessEventPlacementTuple(),
@@ -357,7 +357,8 @@ class ClockToAbjadScore(core_converters.abc.Converter):
     ) -> abjad.Score:
         abjad_score = abjad.Score([])
         abjad_score.remove_commands.append("System_start_delimiter_engraver")
-        self._add_clock_events_to_abjad_score(clock_to_convert, abjad_score)
+        if self._clock_event_to_abjad_staff_group is not None:
+            self._add_clock_events_to_abjad_score(clock_to_convert, abjad_score)
         self._add_event_placements_to_abjad_score(
             clock_to_convert, tag_tuple, abjad_score
         )
@@ -427,6 +428,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
     def get_header_block(
         self,
         title: typing.Optional[str] = None,
+        subtitle: typing.Optional[str] = None,
         composer: typing.Optional[str] = None,
         year: typing.Optional[str] = None,
         tagline: str = '""',
@@ -434,6 +436,8 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         header_block = abjad.Block("header")
         if title is not None:
             header_block.items.append(rf"title = {title}")
+        if subtitle is not None:
+            header_block.items.append(rf"subtitle = {subtitle}")
         if year is not None:
             header_block.items.append(rf"year = {year}")
         if composer is not None:
@@ -463,6 +467,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         self,
         abjad_score_block_tuple_to_convert: tuple[abjad.Block, ...],
         title: typing.Optional[str] = None,
+        subtitle: typing.Optional[str] = None,
         composer: typing.Optional[str] = None,
         year: typing.Optional[str] = None,
         tagline: str = '""',
@@ -470,7 +475,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         lilypond_file = abjad.LilyPondFile([])
 
         header_block = self.get_header_block(
-            title=title, composer=composer, year=year, tagline=tagline
+            title=title, subtitle=subtitle, composer=composer, year=year, tagline=tagline
         )
         paper_block = self.get_paper_block()
 
