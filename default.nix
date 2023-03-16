@@ -3,10 +3,10 @@ with pkgs.python310Packages;
 
 let
 
-  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/5b0e331e4dbaee02848ff5940c6f7fa35fe8da30.tar.gz";
+  mutwo-timeline-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.timeline/archive/cef411566da9cff644066eceb1fb459ecaca2487.tar.gz";
   mutwo-timeline = import (mutwo-timeline-archive + "/default.nix");
 
-  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/9355d09c300b8a32575b82f4f250d4e158167118.tar.gz";
+  mutwo-abjad-archive = builtins.fetchTarball "https://github.com/mutwo-org/mutwo.abjad/archive/3ea5a58a7d4639bd820641d8efc80e106f4bfea7.tar.gz";
   mutwo-abjad = import (mutwo-abjad-archive + "/default.nix");
 
   treelib = pkgs.python310Packages.buildPythonPackage rec {
