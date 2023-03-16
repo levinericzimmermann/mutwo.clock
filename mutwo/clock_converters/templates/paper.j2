@@ -1,4 +1,24 @@
 
+
+oddHeaderMarkup = \markup \fill-line { " " }
+evenHeaderMarkup = \markup \fill-line { " " }
+oddFooterMarkup = \markup {
+  \fill-line {
+    \typewriter \fontsize #-1
+    \on-the-fly #print-page-number-check-first
+    \fromproperty #'page:page-number-string
+  }
+}
+evenFooterMarkup = \markup {
+  \fill-line {
+    \typewriter \fontsize #-1
+    \on-the-fly #print-page-number-check-first
+    \fromproperty #'page:page-number-string
+  }
+}
+
+
+
 print-first-page-number = ##t
 
 % Deactivated
