@@ -12,6 +12,7 @@ ragged-last = ##t
   \override SystemStartBar.collapse-height = #1
   % Avoid bar lines from time signatures of other staff groups
   % (move them to Staff context).
+  % XXX: Remove for lilypond 2.24, Default_bar_line_engraver is dropped
   \remove "Default_bar_line_engraver"
   % Allow breaks between bar lines
   % (this is important because we have)
@@ -72,6 +73,9 @@ ragged-last = ##t
   {% if move_timing_translator %}
   \consists "Timing_translator"
   {% endif %}
+  % XXX: Remove for lilypond 2.24, Default_bar_line_engraver is dropped,
+  % but there is Bar_engraver
+  % https://lilypond.org/doc/v2.24/Documentation/internals/bar_005fengraver
   \consists "Default_bar_line_engraver"
   \remove "Separating_line_group_engraver"
   {% if remove_empty_staves %}
