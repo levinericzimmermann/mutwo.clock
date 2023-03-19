@@ -58,6 +58,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         ] = None,
         staff_count: int = 1,
         staff_lilypond_type: str = "Staff",
+        placement_mode: typing.Literal["fixed", "floating"] = "fixed",
     ):
 
         if complex_event_to_abjad_container is None:
@@ -67,6 +68,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         self._complex_event_to_abjad_container = complex_event_to_abjad_container
         self._staff_count = staff_count
         self._staff_lilypond_type = staff_lilypond_type
+        self._placement_mode = placement_mode
 
     def _convert_rest(
         self,
@@ -77,11 +79,22 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         staff_group = abjad.StaffGroup([], name=tag)
         for abjad_staff_index in range(self._staff_count):
             skip = abjad.Skip(written_duration)
+            match self._placement_mode:
+                case "fixed":
+                    content = (
+                        r"\stopStaff "
+                        r"\override Staff.StaffSymbol.line-count = #0 "
+                        r"\startStaff "
+                        r"\omit Staff.Clef \omit Staff.NoteHead "
+                        r"\omit Staff.BarLine "
+                    )
+                case "floating":
+                    content = r"\omit Staff.Clef " "\n" r"\stopStaff "
+                case _:
+                    raise NotImplementedError(self.mode)
+            content = rf"{content}\n{scale_durations}"
             abjad.attach(
-                abjad.LilyPondLiteral(
-                    r"\omit Staff.Clef " "\n" r"\stopStaff " "\n" f"{scale_durations}",
-                    site="before",
-                ),
+                abjad.LilyPondLiteral(content, site="before"),
                 skip,
             )
             staff = abjad.Staff(
@@ -123,11 +136,26 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                 abjad_voice.name = f"{abjad_staff.name}-{abjad_voice_index}"
                 leaf_selection = abjad.select.leaves(abjad_voice)
                 first_leaf = leaf_selection[0]
+                match self._placement_mode:
+                    case "fixed":
+                        content = "\n".join(
+                            (
+                                r"\stopStaff",
+                                r"\revert Staff.StaffSymbol.line-count",
+                                r"\startStaff",
+                                r"\undo \omit Staff.Clef \undo \omit Staff.NoteHead",
+                                r"\undo \hide Staff.BarLine ",
+                            )
+                        )
+                    case "floating":
+                        content = r"\startStaff"
+                    case _:
+                        raise NotImplementedError(self._placement_mode)
                 abjad.attach(
                     abjad.LilyPondLiteral(
                         "\n".join(
                             (
-                                r"\startStaff",
+                                content,
                                 r"\once \undo \omit Staff.Clef",
                                 r"\set Staff.forceClef = ##t",
                                 show_barline(),
@@ -269,7 +297,9 @@ class ClockToAbjadScore(core_converters.abc.Converter):
         #   (b) tag_tuple, on the other hand, is provided to specify which
         #       voices are mandatory in the returned score (aka partbook).
         tag_to_abjad_staff_group_converter: dict[Tag, EventPlacementToAbjadStaffGroup],
-        clock_event_to_abjad_staff_group: typing.Optional[ClockEventToAbjadStaffGroup] = ClockEventToAbjadStaffGroup(),
+        clock_event_to_abjad_staff_group: typing.Optional[
+            ClockEventToAbjadStaffGroup
+        ] = ClockEventToAbjadStaffGroup(),
         timeline_to_event_placement_tuple: timeline_converters.TimeLineToEventPlacementTuple = timeline_converters.TimeLineToEventPlacementTuple(),
         event_placement_tuple_to_split_event_placement_dict: timeline_converters.EventPlacementTupleToSplitEventPlacementDict = timeline_converters.EventPlacementTupleToSplitEventPlacementDict(),
         event_placement_tuple_to_gapless_event_placement_tuple: timeline_converters.EventPlacementTupleToGaplessEventPlacementTuple = timeline_converters.EventPlacementTupleToGaplessEventPlacementTuple(),
@@ -475,7 +505,11 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         lilypond_file = abjad.LilyPondFile([])
 
         header_block = self.get_header_block(
-            title=title, subtitle=subtitle, composer=composer, year=year, tagline=tagline
+            title=title,
+            subtitle=subtitle,
+            composer=composer,
+            year=year,
+            tagline=tagline,
         )
         paper_block = self.get_paper_block()
 
