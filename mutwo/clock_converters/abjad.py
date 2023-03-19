@@ -129,6 +129,12 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
             event_to_convert
         )
         tag = event_to_convert.tag
+        if (real_staff_count := len(abjad_staff_group)) != self._staff_count:
+            warnings.warn(
+                clock_utilities.BadStaffCountWarning(
+                    real_staff_count, self._staff_count, tag
+                )
+            )
         for abjad_staff_index, abjad_staff in enumerate(abjad_staff_group):
             abjad_staff.name = self._get_abjad_staff_name(tag, abjad_staff_index)
             abjad_staff.lilypond_type = self._staff_lilypond_type
