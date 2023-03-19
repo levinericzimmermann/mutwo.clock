@@ -92,7 +92,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                     content = r"\omit Staff.Clef " "\n" r"\stopStaff "
                 case _:
                     raise NotImplementedError(self.mode)
-            content = rf"{content}\n{scale_durations}"
+            content = f"{content}\n{scale_durations}"
             abjad.attach(
                 abjad.LilyPondLiteral(content, site="before"),
                 skip,
