@@ -165,6 +165,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                                 r"\once \undo \omit Staff.Clef",
                                 r"\set Staff.forceClef = ##t",
                                 show_barline(),
+                                r'\bar "|"',
                             )
                         ),
                         site="absolute_before",
@@ -184,7 +185,8 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                     abjad.attach(abjad.LilyPondLiteral("}", site="after"), leaf)
                 last_leaf = leaf
                 abjad.attach(
-                    abjad.LilyPondLiteral(show_barline(), site="after"), last_leaf
+                    abjad.LilyPondLiteral(rf'{show_barline()} \bar "|"', site="after"),
+                    last_leaf,
                 )
         return abjad_staff_group
 
@@ -266,7 +268,7 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
                 d = self._safety_rest_duration.duration
                 s = abjad.Skip(d)
                 abjad.attach(abjad.TimeSignature((d.numerator, d.denominator)), s)
-                abjad_staff.append(s)
+                abjad_staff[0].append(abjad.Container([s]))
             abjad_staff.name = f"{abjad_staff_group_name}-staff-{staff_index}"
             leaf_selection = abjad.select.leaves(abjad_staff_group)
             first_leaf, last_leaf = leaf_selection[0], leaf_selection[-1]
