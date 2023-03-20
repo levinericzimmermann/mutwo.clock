@@ -5,16 +5,12 @@ evenHeaderMarkup = \markup \fill-line { " " }
 oddFooterMarkup = \markup {
   \fill-line {
     \typewriter \fontsize #-1
-    % XXX: Remove next line for 2.24 compatibility
-    \on-the-fly #print-page-number-check-first
     \fromproperty #'page:page-number-string
   }
 }
 evenFooterMarkup = \markup {
   \fill-line {
     \typewriter \fontsize #-1
-    % XXX: Remove next line for 2.24 compatibility
-    \on-the-fly #print-page-number-check-first
     \fromproperty #'page:page-number-string
   }
 }

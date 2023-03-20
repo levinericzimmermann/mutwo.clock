@@ -12,17 +12,10 @@ ragged-last = ##t
   \override SystemStartBar.collapse-height = #1
   % Avoid bar lines from time signatures of other staff groups
   % (move them to Staff context).
-  % XXX: Remove for lilypond 2.24, Default_bar_line_engraver is dropped
-  \remove "Default_bar_line_engraver"
   % Allow breaks between bar lines
   % (this is important because we have)
   % (only very few bar lines).
-  % !forbidBreakBetweenBarLines = ##f
-  % !forbidBreakBetweenBarLines doesn't exist yet in 2.22,
-  % !it's only available from 2.23. Once migrated to next
-  % !stable release I should remove the 'barAlways' and use
-  % !forbidBreakBetweenBarLines !
-  barAlways = ##t
+  forbidBreakBetweenBarLines = ##f
   % Arpeggi across staves
   \consists "Span_arpeggio_engraver"
   % PROPORTIONAL NOTATION!!
@@ -43,7 +36,7 @@ ragged-last = ##t
   connectArpeggios = ##t
   % We need clefs AFTER bar lines, not before them
   %     https://www.mail-archive.com/lilypond-user@gnu.org/msg125397.html
-  \override BreakAlignment #'break-align-orders = #(make-vector 3 '(staff-bar clef))
+  \override BreakAlignment.break-align-orders = #(make-vector 3 '(staff-bar clef))
   % We don't want to see a single bar line at the end of a line.
   % We need to set the default bar line (glyph-name), otherwise we'll
   % catch an exception.
@@ -73,10 +66,6 @@ ragged-last = ##t
   {% if move_timing_translator %}
   \consists "Timing_translator"
   {% endif %}
-  % XXX: Remove for lilypond 2.24, Default_bar_line_engraver is dropped,
-  % but there is Bar_engraver
-  % https://lilypond.org/doc/v2.24/Documentation/internals/bar_005fengraver
-  \consists "Default_bar_line_engraver"
   \remove "Separating_line_group_engraver"
   {% if remove_empty_staves %}
   \RemoveEmptyStaves
