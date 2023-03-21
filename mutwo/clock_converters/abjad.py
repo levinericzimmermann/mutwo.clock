@@ -203,7 +203,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
 
         # NOTE: limit_denominator is necessary, because Lilypond will complain
         # otherwise and will simply hide notes.
-        ratio = (real_duration / written_duration).limit_denominator(10000)
+        ratio = (real_duration / written_duration).limit_denominator(100000)
 
         scale_durations = rf"\scaleDurations {ratio.numerator}/{ratio.denominator}"
 
