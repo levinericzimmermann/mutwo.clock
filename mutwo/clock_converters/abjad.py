@@ -219,16 +219,12 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
         complex_event_to_abjad_container: typing.Optional[
             abjad_converters.ComplexEventToAbjadContainer
         ] = None,
-        safety_rest_duration: typing.Optional[
-            core_parameters.abc.Duration
-        ] = core_parameters.DirectDuration(1),
     ):
         if complex_event_to_abjad_container is None:
             complex_event_to_abjad_container = (
                 clock_converters.configurations.DEFAULT_COMPLEX_EVENT_TO_ABJAD_CONTAINER
             )
         self._complex_event_to_abjad_container = complex_event_to_abjad_container
-        self._safety_rest_duration = safety_rest_duration
 
     def convert(
         self,
@@ -236,8 +232,6 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
         is_repeating: bool,
         magnification_size: int = -2,
     ) -> abjad.StaffGroup:
-        clock_event_to_convert = clock_event_to_convert.destructive_copy()
-
         clock_event_to_convert_duration = clock_event_to_convert.duration.duration
         time_signature_tuple = (
             abjad.TimeSignature(
@@ -249,7 +243,6 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
         )
         for sequential_event in clock_event_to_convert:
             sequential_event.time_signature_tuple = time_signature_tuple
-
         abjad_staff_group = self._complex_event_to_abjad_container.convert(
             clock_event_to_convert
         )
@@ -257,18 +250,6 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
         abjad_staff_group_name = abjad_staff_group.name
 
         for staff_index, abjad_staff in enumerate(abjad_staff_group):
-            # XXX: For reasons which I don't understand, Lilypond sometimes don't print
-            # the full clock based score, but stops somewhere in the middle. One
-            # simple way how this bug could be fixed is by adding an additional
-            # rest at the end of the clock line.
-            #
-            # Maybe the actual reasons for this bug are rounding issues, but I'm
-            # not sure.
-            if self._safety_rest_duration:
-                d = self._safety_rest_duration.duration
-                s = abjad.Skip(d)
-                abjad.attach(abjad.TimeSignature((d.numerator, d.denominator)), s)
-                abjad_staff[0].append(abjad.Container([s]))
             abjad_staff.name = f"{abjad_staff_group_name}-staff-{staff_index}"
             leaf_selection = abjad.select.leaves(abjad_staff_group)
             first_leaf, last_leaf = leaf_selection[0], leaf_selection[-1]
