@@ -59,6 +59,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         staff_count: int = 1,
         staff_lilypond_type: str = "Staff",
         placement_mode: typing.Literal["fixed", "floating"] = "fixed",
+        max_denominator: int = 100000,
     ):
 
         if complex_event_to_abjad_container is None:
@@ -69,6 +70,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         self._staff_count = staff_count
         self._staff_lilypond_type = staff_lilypond_type
         self._placement_mode = placement_mode
+        self._max_denominator = max_denominator
 
     def _convert_rest(
         self,
@@ -203,7 +205,9 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
 
         # NOTE: limit_denominator is necessary, because Lilypond will complain
         # otherwise and will simply hide notes.
-        ratio = (real_duration / written_duration).limit_denominator(100000)
+        ratio = (real_duration / written_duration).limit_denominator(
+            self._max_denominator
+        )
 
         scale_durations = rf"\scaleDurations {ratio.numerator}/{ratio.denominator}"
 
