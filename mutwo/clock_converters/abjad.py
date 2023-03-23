@@ -467,6 +467,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         after_title_space: typing.Optional[float] = None,
         between_title_space: typing.Optional[float] = None,
         page_top_space: typing.Optional[float] = None,
+        page_breaking: typing.Optional[str] = None,
     ):
         self._with_point_and_click = with_point_and_click
         self._system_system_padding = system_system_padding
@@ -488,6 +489,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         self._after_title_space = after_title_space
         self._between_title_space = between_title_space
         self._page_top_space = page_top_space
+        self._page_breaking = page_breaking
 
     def get_header_block(
         self,
@@ -533,6 +535,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
                     after_title_space=self._after_title_space,
                     between_title_space=self._between_title_space,
                     page_top_space=self._page_top_space,
+                    page_breaking=self._page_breaking,
                 )
             )
         )
