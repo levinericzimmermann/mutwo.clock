@@ -456,6 +456,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         markup_system_padding: float = 4,
         markup_system_basic_distance: float = 15,
         staff_height: float = 20,
+        print_page_number: bool = True,
     ):
         self._with_point_and_click = with_point_and_click
         self._system_system_padding = system_system_padding
@@ -466,6 +467,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         self._markup_system_basic_distance = markup_system_basic_distance
         self._staff_height = staff_height
         self._add_page_break_between_clock = add_page_break_between_clock
+        self._print_page_number = print_page_number
 
     def get_header_block(
         self,
@@ -500,6 +502,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
                     markup_system_basic_distance=self._markup_system_basic_distance,
                     font="Liberation Mono",
                     staff_height=self._staff_height,
+                    print_page_number=self._print_page_number,
                 )
             )
         )

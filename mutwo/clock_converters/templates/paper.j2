@@ -1,23 +1,29 @@
 
 
-oddHeaderMarkup = \markup \fill-line { " " }
-evenHeaderMarkup = \markup \fill-line { " " }
-oddFooterMarkup = \markup {
-  \fill-line {
-    \typewriter \fontsize #-1
-    \fromproperty #'page:page-number-string
-  }
-}
-evenFooterMarkup = \markup {
-  \fill-line {
-    \typewriter \fontsize #-1
-    \fromproperty #'page:page-number-string
-  }
-}
+{% if print_page_number %}
 
+    oddHeaderMarkup = \markup \fill-line { " " }
+    evenHeaderMarkup = \markup \fill-line { " " }
+    oddFooterMarkup = \markup {
+      \fill-line {
+        \typewriter \fontsize #-1
+        \fromproperty #'page:page-number-string
+      }
+    }
+    evenFooterMarkup = \markup {
+      \fill-line {
+        \typewriter \fontsize #-1
+        \fromproperty #'page:page-number-string
+      }
+    }
 
+    print-first-page-number = ##t
 
-print-first-page-number = ##t
+{% else %}
+
+    print-page-number = ##f
+
+{% endif %}
 
 % Deactivated
 % system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }
