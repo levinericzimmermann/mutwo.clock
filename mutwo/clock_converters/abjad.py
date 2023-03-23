@@ -457,6 +457,16 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         markup_system_basic_distance: float = 15,
         staff_height: float = 20,
         print_page_number: bool = True,
+        top_margin: typing.Optional[float] = None,
+        bottom_margin: typing.Optional[float] = None,
+        left_margin: typing.Optional[float] = None,
+        food_separation: typing.Optional[float] = None,
+        head_separation: typing.Optional[float] = None,
+        line_width: typing.Optional[float] = None,
+        before_title_space: typing.Optional[float] = None,
+        after_title_space: typing.Optional[float] = None,
+        between_title_space: typing.Optional[float] = None,
+        page_top_space: typing.Optional[float] = None,
     ):
         self._with_point_and_click = with_point_and_click
         self._system_system_padding = system_system_padding
@@ -468,6 +478,16 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         self._staff_height = staff_height
         self._add_page_break_between_clock = add_page_break_between_clock
         self._print_page_number = print_page_number
+        self._top_margin = top_margin
+        self._bottom_margin = bottom_margin
+        self._left_margin = left_margin
+        self._food_separation = food_separation
+        self._head_separation = head_separation
+        self._line_width = line_width
+        self._before_title_space = before_title_space
+        self._after_title_space = after_title_space
+        self._between_title_space = between_title_space
+        self._page_top_space = page_top_space
 
     def get_header_block(
         self,
@@ -503,6 +523,16 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
                     font="Liberation Mono",
                     staff_height=self._staff_height,
                     print_page_number=self._print_page_number,
+                    top_margin=self._top_margin,
+                    bottom_margin=self._bottom_margin,
+                    left_margin=self._left_margin,
+                    food_separation=self._food_separation,
+                    head_separation=self._head_separation,
+                    line_width=self._line_width,
+                    before_title_space=self._before_title_space,
+                    after_title_space=self._after_title_space,
+                    between_title_space=self._between_title_space,
+                    page_top_space=self._page_top_space,
                 )
             )
         )

@@ -25,6 +25,52 @@
 
 {% endif %}
 
+
+{% if top_margin %}
+top-margin = {{ top_margin }}\cm
+{% endif %}
+
+{% if bottom_margin %}
+bottom-margin = {{ bottom_margin }}\cm
+{% endif %}
+
+{% if left_margin %}
+left-margin = {{ left_margin }}\cm
+{% endif %}
+
+
+{% if foot_separation %}
+foot-separation = {{ foot_separation }}\cm
+{% endif %}
+
+{% if head_separation %}
+head-separation = {{ head_separation }}\cm
+{% endif %}
+
+
+{% if line_width %}
+line-width = {{ line_width }}\cm
+{% endif %}
+
+
+{% if before_title_space %}
+before-title-space = {{ before_title_space }}\cm
+{% endif %}
+
+{% if after_title_space %}
+after-title-space = {{ after_title_space }}\cm
+{% endif %}
+
+{% if between_title_space %}
+between-title-space = {{ between_title_space }}\cm
+{% endif %}
+
+
+{% if page_top_space %}
+page-top-space = {{ page_top_space }}\cm
+{% endif %}
+
+
 % Deactivated
 % system-separator-markup = \markup \fill-line { \override #'(span-factor . 1/16) \draw-hline }
 
