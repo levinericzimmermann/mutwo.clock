@@ -532,7 +532,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
                     top_margin=self._top_margin,
                     bottom_margin=self._bottom_margin,
                     left_margin=self._left_margin,
-                    food_separation=self._food_separation,
+                    foot_separation=self._foot_separation,
                     head_separation=self._head_separation,
                     line_width=self._line_width,
                     before_title_space=self._before_title_space,
