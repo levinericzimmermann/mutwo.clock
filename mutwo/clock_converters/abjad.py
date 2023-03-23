@@ -464,7 +464,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         top_margin: typing.Optional[float] = None,
         bottom_margin: typing.Optional[float] = None,
         left_margin: typing.Optional[float] = None,
-        food_separation: typing.Optional[float] = None,
+        foot_separation: typing.Optional[float] = None,
         head_separation: typing.Optional[float] = None,
         line_width: typing.Optional[float] = None,
         before_title_space: typing.Optional[float] = None,
@@ -486,7 +486,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         self._top_margin = top_margin
         self._bottom_margin = bottom_margin
         self._left_margin = left_margin
-        self._food_separation = food_separation
+        self._foot_separation = foot_separation
         self._head_separation = head_separation
         self._line_width = line_width
         self._before_title_space = before_title_space
