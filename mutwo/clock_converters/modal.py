@@ -215,6 +215,7 @@ class Modal0SequentialEventToModal1SequentialEvent(core_converters.abc.Converter
                                 clock_event=clock_p1,
                                 control_event=control_p1,
                                 scale=m0_ev_B.scale,
+                                energy=getattr(m0_ev_B, "energy", 0),
                             ),
                         )
                     )
@@ -227,6 +228,7 @@ class Modal0SequentialEventToModal1SequentialEvent(core_converters.abc.Converter
                                 clock_event=clock_p0,
                                 control_event=control_p0,
                                 scale=m0_ev_A.scale,
+                                energy=getattr(m0_ev_A, "energy", 0),
                             ),
                             core_events.SimpleEvent(m0_ev_B.duration / 2),
                         )
@@ -241,6 +243,10 @@ class Modal0SequentialEventToModal1SequentialEvent(core_converters.abc.Converter
                     scale=m0_ev_A.scale.intersection(m0_ev_B.scale)
                     if hasattr(m0_ev_B, "scale")
                     else m0_ev_A.scale,
+                    energy=(
+                        getattr(m0_ev_A, "energy", 0) + getattr(m0_ev_B, "energy", 0)
+                    )
+                    // 2,
                 )
                 m1seq.append(modal_event_1)
 
