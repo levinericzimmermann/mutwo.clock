@@ -14,10 +14,12 @@ class ModalEvent(core_events.SimpleEvent):
         scale: music_parameters.Scale,
         clock_event: typing.Optional[clock_events.ClockEvent] = None,
         control_event: typing.Optional[core_events.SimultaneousEvent] = None,
+        energy: int = 0,
     ):
         self.scale = scale
         self.clock_event = clock_event
         self.control_event = control_event
+        self.energy = energy
         super().__init__(0)  # Duration is defined by clock event duration!
 
     @property
