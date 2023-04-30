@@ -123,7 +123,7 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
         # breaks the notation synchronization.
         durationf = event_to_convert.duration.duration
         time_signature = abjad.TimeSignature(
-            (durationf.numerator, durationf.denominator)
+            (int(durationf.numerator), int(durationf.denominator))
         )
         for sequential_event in event_to_convert:
             sequential_event.time_signature_tuple = (time_signature,)
@@ -240,8 +240,8 @@ class ClockEventToAbjadStaffGroup(core_converters.abc.Converter):
         time_signature_tuple = (
             abjad.TimeSignature(
                 (
-                    clock_event_to_convert_duration.numerator,
-                    clock_event_to_convert_duration.denominator,
+                    int(clock_event_to_convert_duration.numerator),
+                    int(clock_event_to_convert_duration.denominator),
                 )
             ),
         )
