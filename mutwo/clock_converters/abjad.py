@@ -414,6 +414,7 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         remove_empty_staves: bool = False,
         consist_timing_translator: bool = True,
         staff_size: float = 20,
+        strict_grace_spanning: bool = True,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
         abjad_layout_block.items.append(
@@ -423,6 +424,7 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
                     remove_empty_staves=remove_empty_staves,
                     move_timing_translator=not consist_timing_translator,
                     staff_size=staff_size,
+                    strict_grace_spanning=strict_grace_spanning,
                 )
             )
         )
@@ -435,6 +437,7 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         consist_timing_translator: bool = True,
         moment: int = 4,
         staff_size: float = 20,
+        strict_grace_spanning: bool = True,
     ) -> abjad.Block:
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
@@ -443,6 +446,7 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
             remove_empty_staves=remove_empty_staves,
             consist_timing_translator=consist_timing_translator,
             staff_size=staff_size,
+            strict_grace_spanning=strict_grace_spanning,
         )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block
