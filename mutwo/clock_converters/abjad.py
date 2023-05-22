@@ -415,6 +415,10 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         consist_timing_translator: bool = True,
         staff_size: float = 20,
         strict_grace_spanning: bool = True,
+        staff_staff_spacing_basic_distance: float = 6,
+        staff_staff_spacing_minimum_distance: float = 5,
+        staff_staff_spacing_padding: float = 1,
+        staff_staff_spacing_stretchability: float = 1,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
         abjad_layout_block.items.append(
@@ -425,6 +429,10 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
                     move_timing_translator=not consist_timing_translator,
                     staff_size=staff_size,
                     strict_grace_spanning=strict_grace_spanning,
+                    staff_staff_spacing_basic_distance=staff_staff_spacing_basic_distance,
+                    staff_staff_spacing_minimum_distance=staff_staff_spacing_minimum_distance,
+                    staff_staff_spacing_padding=staff_staff_spacing_padding,
+                    staff_staff_spacing_stretchability=staff_staff_spacing_stretchability,
                 )
             )
         )
@@ -438,6 +446,10 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         moment: int = 4,
         staff_size: float = 20,
         strict_grace_spanning: bool = True,
+        staff_staff_spacing_basic_distance: float = 6,
+        staff_staff_spacing_minimum_distance: float = 5,
+        staff_staff_spacing_padding: float = 1,
+        staff_staff_spacing_stretchability: float = 1,
     ) -> abjad.Block:
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
@@ -447,6 +459,10 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
             consist_timing_translator=consist_timing_translator,
             staff_size=staff_size,
             strict_grace_spanning=strict_grace_spanning,
+            staff_staff_spacing_basic_distance=staff_staff_spacing_basic_distance,
+            staff_staff_spacing_minimum_distance=staff_staff_spacing_minimum_distance,
+            staff_staff_spacing_padding=staff_staff_spacing_padding,
+            staff_staff_spacing_stretchability=staff_staff_spacing_stretchability,
         )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block
