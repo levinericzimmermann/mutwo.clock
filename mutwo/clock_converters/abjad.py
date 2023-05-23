@@ -347,6 +347,7 @@ class ClockToAbjadScore(core_converters.abc.Converter):
         self,
         clock_to_convert: clock_interfaces.Clock,
         tag_tuple: tuple[Tag, ...],
+        ordered_tag_tuple: tuple[Tag, ...],
         abjad_score: abjad.Score,
     ):
         event_placement_list: list[timeline_interfaces.EventPlacement] = []
@@ -370,8 +371,15 @@ class ClockToAbjadScore(core_converters.abc.Converter):
             )
         )
 
+        ordered_tag_list = list(ordered_tag_tuple)
+        for tag in tag_to_event_placement_tuple:
+            if tag not in ordered_tag_list:
+                ordered_tag_list.append(tag)
+
         clock_duration = clock_to_convert.duration
-        for tag, event_placement_tuple in tag_to_event_placement_tuple.items():
+        for tag in ordered_tag_list:
+            event_placement_tuple = tag_to_event_placement_tuple[tag]
+
             gapless_event_placement_tuple = (
                 self._event_placement_tuple_to_gapless_event_placement_tuple.convert(
                     event_placement_tuple, clock_duration
@@ -396,13 +404,14 @@ class ClockToAbjadScore(core_converters.abc.Converter):
         self,
         clock_to_convert: clock_interfaces.Clock,
         tag_tuple: tuple[Tag, ...],
+        ordered_tag_tuple: tuple[Tag, ...] = tuple([]),
     ) -> abjad.Score:
         abjad_score = abjad.Score([])
         abjad_score.remove_commands.append("System_start_delimiter_engraver")
         if self._clock_event_to_abjad_staff_group is not None:
             self._add_clock_events_to_abjad_score(clock_to_convert, abjad_score)
         self._add_event_placements_to_abjad_score(
-            clock_to_convert, tag_tuple, abjad_score
+            clock_to_convert, tag_tuple, ordered_tag_tuple, abjad_score
         )
         return abjad_score
 
