@@ -26,52 +26,52 @@
 {% endif %}
 
 
-{% if top_margin %}
+{% if top_margin is not none %}
 top-margin = {{ top_margin }}\cm
 {% endif %}
 
-{% if bottom_margin %}
+{% if bottom_margin is not none %}
 bottom-margin = {{ bottom_margin }}\cm
 {% endif %}
 
-{% if left_margin %}
+{% if left_margin is not none %}
 left-margin = {{ left_margin }}\cm
 {% endif %}
 
 
-{% if foot_separation %}
+{% if foot_separation is not none %}
 foot-separation = {{ foot_separation }}\cm
 {% endif %}
 
-{% if head_separation %}
+{% if head_separation is not none %}
 head-separation = {{ head_separation }}\cm
 {% endif %}
 
 
-{% if line_width %}
+{% if line_width is not none %}
 line-width = {{ line_width }}\cm
 {% endif %}
 
 
-{% if before_title_space %}
+{% if before_title_space is not none %}
 before-title-space = {{ before_title_space }}\cm
 {% endif %}
 
-{% if after_title_space %}
+{% if after_title_space is not none %}
 after-title-space = {{ after_title_space }}\cm
 {% endif %}
 
-{% if between_title_space %}
+{% if between_title_space is not none %}
 between-title-space = {{ between_title_space }}\cm
 {% endif %}
 
 
-{% if page_top_space %}
+{% if page_top_space is not none %}
 page-top-space = {{ page_top_space }}\cm
 {% endif %}
 
 
-{% if page_breaking %}
+{% if page_breaking is not none %}
 page-breaking = {{ page_breaking }}
 {% endif %}
 
