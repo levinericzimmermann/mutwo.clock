@@ -151,7 +151,8 @@ class EventPlacementToAbjadStaffGroup(core_converters.abc.Converter):
                                 r"\stopStaff",
                                 r"\revert Staff.StaffSymbol.line-count",
                                 r"\startStaff",
-                                r"\undo \omit Staff.Clef \undo \omit Staff.NoteHead",
+                                r"\undo \omit Staff.Clef",
+                                r"\undo \omit Staff.NoteHead",
                                 r"\undo \hide Staff.BarLine ",
                             )
                         )
@@ -428,6 +429,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         staff_staff_spacing_minimum_distance: float = 5,
         staff_staff_spacing_padding: float = 1,
         staff_staff_spacing_stretchability: float = 1,
+        ragged_right: bool = True,
+        ragged_last: bool = True,
     ) -> abjad.Block:
         abjad_layout_block = abjad.Block("layout")
         abjad_layout_block.items.append(
@@ -442,6 +445,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
                     staff_staff_spacing_minimum_distance=staff_staff_spacing_minimum_distance,
                     staff_staff_spacing_padding=staff_staff_spacing_padding,
                     staff_staff_spacing_stretchability=staff_staff_spacing_stretchability,
+                    ragged_right=ragged_right,
+                    ragged_last=ragged_last,
                 )
             )
         )
@@ -459,6 +464,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
         staff_staff_spacing_minimum_distance: float = 5,
         staff_staff_spacing_padding: float = 1,
         staff_staff_spacing_stretchability: float = 1,
+        ragged_right: bool = True,
+        ragged_last: bool = True,
     ) -> abjad.Block:
         abjad_score_block = abjad.Block("score")
         abjad_score_block.items.append(abjad_score_to_convert)
@@ -472,6 +479,8 @@ class AbjadScoreToAbjadScoreBlock(core_converters.abc.Converter):
             staff_staff_spacing_minimum_distance=staff_staff_spacing_minimum_distance,
             staff_staff_spacing_padding=staff_staff_spacing_padding,
             staff_staff_spacing_stretchability=staff_staff_spacing_stretchability,
+            ragged_right=ragged_right,
+            ragged_last=ragged_last,
         )
         abjad_score_block.items.append(abjad_layout_block)
         return abjad_score_block

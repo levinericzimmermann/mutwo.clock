@@ -2,8 +2,12 @@
 #(layout-set-staff-size {{ staff_size }})
 
 indent = 0
+{%- if ragged_right -%}
 ragged-right = ##t
+{%- endif -%}
+{%- if ragged_last -%}
 ragged-last = ##t
+{%- endif -%}
 
 \context {
   \Score
@@ -27,6 +31,7 @@ ragged-last = ##t
   % combination with 'strict-note-spacing'? But activating this
   % completely breaks clock scores..)
   \override SpacingSpanner.strict-grace-spacing = ##{%- if strict_grace_spanning -%}t{%- else -%}f{%- endif -%}
+
   \override Beam.breakable = ##t
   \override Glissando.breakable = ##t
   \override TextSpanner.breakable = ##t
