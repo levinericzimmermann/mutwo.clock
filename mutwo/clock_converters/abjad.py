@@ -379,7 +379,11 @@ class ClockToAbjadScore(core_converters.abc.Converter):
 
         clock_duration = clock_to_convert.duration
         for tag in ordered_tag_list:
-            event_placement_tuple = tag_to_event_placement_tuple[tag]
+            try:
+                event_placement_tuple = tag_to_event_placement_tuple[tag]
+            # If there is no event placement for this tag, we can just ignore.
+            except KeyError:
+                continue
 
             gapless_event_placement_tuple = (
                 self._event_placement_tuple_to_gapless_event_placement_tuple.convert(
