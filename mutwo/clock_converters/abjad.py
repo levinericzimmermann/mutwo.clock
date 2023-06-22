@@ -514,7 +514,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         between_title_space: typing.Optional[float] = None,
         page_top_space: typing.Optional[float] = None,
         page_breaking: typing.Optional[str] = None,
-        paper_size: str = "a4",
+        paper_size: str = '"a4"',
         landscape: bool = True,
     ):
         self._landscape = landscape
@@ -614,7 +614,7 @@ class AbjadScoreBlockTupleToLilyPondFile(core_converters.abc.Converter):
         if not self._with_point_and_click:
             lilypond_file.items.append(r"\pointAndClickOff")
 
-        paper_size_and_position = rf'#(set-default-paper-size "{self._paper_size}"'
+        paper_size_and_position = rf"#(set-default-paper-size {self._paper_size}"
         if self._landscape:
             paper_size_and_position += " 'landscape)"
         else:
