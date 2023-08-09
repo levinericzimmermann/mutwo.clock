@@ -35,6 +35,7 @@ setuptools.setup(
         "mutwo.music>=0.20.0, <1.0.0",
         "mutwo.timeline>=0.3.0, <0.5.0",
         "mutwo.abjad>=0.15.0, <1.0.0",
+        "mutwo.common>=0.11.0, <1.0.0",
         "numpy>=1.18, <2.00",
         "jinja2>=3.1.2, <4.0.0",
     ],
